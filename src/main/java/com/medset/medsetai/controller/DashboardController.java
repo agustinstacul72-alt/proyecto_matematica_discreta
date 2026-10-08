@@ -1,6 +1,7 @@
 package com.medset.medsetai.controller;
 
 import com.medset.medsetai.service.AiService;
+import com.medset.medsetai.service.AiProvider;
 import com.medset.medsetai.service.GeminiProvider;
 import com.medset.medsetai.service.OllamaProvider;
 import com.medset.medsetai.util.SceneManager;
@@ -20,6 +21,7 @@ import javafx.stage.Stage;
 import javafx.event.ActionEvent;
 
 import java.io.IOException;
+import java.util.concurrent.CompletionException;
 import java.util.concurrent.CompletableFuture;
 
 /**
@@ -148,19 +150,14 @@ public class DashboardController {
      *                     select Ollama
      */
     private void updateProvider(String providerName) {
+        aiService.setProvider(createProvider(providerName));
+    }
 
+    private AiProvider createProvider(String providerName) {
         if ("Gemini".equals(providerName)) {
-
-            aiService.setProvider(
-                    new GeminiProvider()
-            );
-
-        } else {
-
-            aiService.setProvider(
-                    new OllamaProvider()
-            );
+            return new GeminiProvider();
         }
+        return new OllamaProvider();
     }
 
 
@@ -179,10 +176,8 @@ public class DashboardController {
 
         message = message.trim();
 
-        String selectedProvider =
+        String selectedProviderName =
                 assistantProviderComboBox.getValue();
-
-        updateProvider(selectedProvider);
 
         addUserMessage(message);
 
@@ -190,34 +185,51 @@ public class DashboardController {
 
         String finalMessage = message;
 
-        addAiMessage("Pensando...");
+        Label responseLabel = addAiMessage(
+                "Pensando...",
+                selectedProviderName
+        );
 
         CompletableFuture
-                .supplyAsync(() ->
-                        aiService.ask(finalMessage)
-                )
-                .thenAccept(response ->
-                        Platform.runLater(() -> {
-
-                            removeLastMessage();
-
-                            addAiMessage(response);
-
-                            chatScrollPane.setVvalue(1.0);
-                        })
-                )
+                .supplyAsync(() -> {
+                    AiService requestService = new AiService(
+                            createProvider(selectedProviderName)
+                    );
+                    return requestService.ask(finalMessage, fragment ->
+                            Platform.runLater(() -> {
+                                if ("Pensando...".equals(responseLabel.getText())) {
+                                    responseLabel.setText("");
+                                }
+                                responseLabel.setText(
+                                        responseLabel.getText() + fragment
+                                );
+                                chatScrollPane.setVvalue(1.0);
+                            })
+                    );
+                })
                 .exceptionally(error -> {
-
+                    Throwable cause = error;
+                    while (cause instanceof CompletionException
+                            && cause.getCause() != null) {
+                        cause = cause.getCause();
+                    }
+                    String errorMessage = cause.getMessage() == null
+                            ? cause.getClass().getSimpleName()
+                            : cause.getMessage();
                     Platform.runLater(() -> {
-
-                        removeLastMessage();
-
-                        addAiMessage(
-                                "No pude obtener una respuesta. "
-                                        + error.getMessage()
-                        );
+                        String currentText = responseLabel.getText();
+                        if ("Pensando...".equals(currentText)) {
+                            responseLabel.setText(
+                                    "No pude obtener una respuesta. " + errorMessage
+                            );
+                        } else {
+                            responseLabel.setText(
+                                    currentText + "\nNo pude completar la respuesta. "
+                                            + errorMessage
+                            );
+                        }
+                        chatScrollPane.setVvalue(1.0);
                     });
-
                     return null;
                 });
     }
@@ -262,16 +274,14 @@ public class DashboardController {
      *
      * @param message response or status text to display
      */
-    private void addAiMessage(String message) {
+    private Label addAiMessage(String message, String providerName) {
 
         VBox messageBox = new VBox(4);
 
         messageBox.getStyleClass()
                 .add("ai-message");
 
-        Label sender = new Label(
-                aiService.getProviderName()
-        );
+        Label sender = new Label(providerName);
 
         sender.getStyleClass()
                 .add("message-sender");
@@ -290,24 +300,7 @@ public class DashboardController {
                 .add(messageBox);
 
         chatScrollPane.setVvalue(1.0);
-    }
-
-
-    /**
-     * Removes the last transcript item, used to replace the pending indicator.
-     */
-    private void removeLastMessage() {
-
-        int size = chatContainer
-                .getChildren()
-                .size();
-
-        if (size > 1) {
-
-            chatContainer
-                    .getChildren()
-                    .remove(size - 1);
-        }
+        return text;
     }
 
 
