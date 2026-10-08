@@ -70,7 +70,7 @@ jobs:
       - name: Add application jar to installer input
         shell: bash
         run: |
-          cp target/medset-ai-1.0.1.jar target/package-input/medset-ai.jar
+          cp target/medset-ai-1.0.2.jar target/package-input/medset-ai.jar
 
       - name: Create and smoke-test native application image
         shell: bash
@@ -153,7 +153,7 @@ jobs:
         if: runner.os == 'Linux'
         run: |
           sudo apt-get install --yes ./target/installers/*.deb
-          xvfb-run --auto-servernum /opt/MedSetAI/bin/MedSetAI --smoke-test
+          xvfb-run --auto-servernum /opt/medsetai/bin/MedSetAI --smoke-test
 
       - name: Install and smoke-test macOS package
         if: runner.os == 'macOS'

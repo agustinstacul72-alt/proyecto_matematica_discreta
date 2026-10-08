@@ -26,7 +26,7 @@ jobs:
         run: bash ./mvnw --batch-mode --no-transfer-progress test package dependency:copy-dependencies "-DincludeScope=runtime" "-DoutputDirectory=target/package-input"
       - name: Prepare application image
         run: |
-          cp target/medset-ai-1.0.1.jar target/package-input/medset-ai.jar
+          cp target/medset-ai-1.0.2.jar target/package-input/medset-ai.jar
           jpackage --type app-image --name MedSetAI \
             --input target/package-input \
             --main-jar medset-ai.jar \
