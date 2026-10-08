@@ -23,6 +23,8 @@ jobs:
         include:
           - os: windows-latest
             installer: msi
+          - os: windows-latest
+            installer: exe
           - os: ubuntu-latest
             installer: deb
           - os: macos-latest
@@ -70,7 +72,7 @@ jobs:
       - name: Add application jar to installer input
         shell: bash
         run: |
-          cp target/medset-ai-1.0.2.jar target/package-input/medset-ai.jar
+          cp target/medset-ai-1.0.3.jar target/package-input/medset-ai.jar
 
       - name: Create and smoke-test native application image
         shell: bash
@@ -115,15 +117,21 @@ jobs:
           fi
           jpackage "${args[@]}"
 
-      - name: Install and smoke-test Windows MSI
+      - name: Install and smoke-test Windows installer
         if: runner.os == 'Windows'
         shell: powershell
+        env:
+          INSTALLER_TYPE: ${{ matrix.installer }}
         run: |
-          $msi = Get-ChildItem target\installers\*.msi | Select-Object -First 1
-          if (-not $msi) { throw "MSI installer was not generated." }
-          $installLog = Join-Path $env:RUNNER_TEMP "MedSetAI-msi-install.log"
-          $install = Start-Process msiexec.exe -ArgumentList @("/i", $msi.FullName, "/qn", "/norestart", "/l*v", $installLog) -Wait -PassThru
-          if ($install.ExitCode -notin @(0, 3010)) { throw "MSI installation failed with exit code $($install.ExitCode)." }
+          $installer = Get-ChildItem "target\installers\*.$env:INSTALLER_TYPE" | Select-Object -First 1
+          if (-not $installer) { throw "$env:INSTALLER_TYPE installer was not generated." }
+          $installLog = Join-Path $env:RUNNER_TEMP "MedSetAI-$env:INSTALLER_TYPE-install.log"
+          if ($env:INSTALLER_TYPE -eq "msi") {
+            $install = Start-Process msiexec.exe -ArgumentList @("/i", $installer.FullName, "/qn", "/norestart", "/l*v", $installLog) -Wait -PassThru
+          } else {
+            $install = Start-Process $installer.FullName -ArgumentList @("/quiet", "/norestart", "/log", $installLog) -Wait -PassThru
+          }
+          if ($install.ExitCode -notin @(0, 3010)) { throw "$env:INSTALLER_TYPE installation failed with exit code $($install.ExitCode)." }
           $uninstallRoots = @(
             "HKCU:\Software\Microsoft\Windows\CurrentVersion\Uninstall\*",
             "HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\*",

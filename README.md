@@ -51,7 +51,7 @@ Maven, recursos, documentación y una plantilla segura de configuración local.
 
 | Componente | Versión para esta release | ¿Se incluye en el instalador? |
 | --- | --- | --- |
-| MedSet AI | `1.0.2` | Sí |
+| MedSet AI | `1.0.3` | Sí |
 | Java | 25 | Sí, como runtime privado de la aplicación |
 | JavaFX | 21.0.6 | Sí, junto con la aplicación |
 | Ollama | `0.40.1` fue la versión probada durante el desarrollo | No |
@@ -91,10 +91,10 @@ bash ./mvnw javafx:run
 
 Cuando haya una release publicada, abre
 [Releases](https://github.com/agustinstacul72-alt/proyecto_matematica_discreta/releases/latest)
-y descarga el paquete de tu sistema: `.msi` para Windows, `.deb` para Ubuntu o
-`.pkg` para macOS. Los paquetes son nativos de su sistema y no se pueden
-intercambiar entre Windows, Linux y macOS. Sigue el asistente del sistema para
-instalar MedSet AI.
+y descarga el instalador de tu sistema: `.exe` (recomendado) o `.msi` para
+Windows, `.deb` para Ubuntu/Linux o `.pkg` para macOS. Los paquetes son nativos
+de su sistema y no se pueden intercambiar entre Windows, Linux y macOS. Abre el
+instalador y sigue sus pasos para instalar MedSet AI.
 
 ### Preparar Ollama para el chat
 
@@ -123,26 +123,28 @@ aplicación o en el entorno del sistema.
 
 ## Crear instaladores de una release
 
-Al crear y subir un tag de versión (`v1.0.2`, por ejemplo), GitHub Actions
-ejecuta las pruebas, genera un instalador nativo y comprueba que la aplicación
+Al crear y subir un tag de versión (`v1.0.3`, por ejemplo), GitHub Actions
+ejecuta las pruebas, genera los instaladores nativos y comprueba que la aplicación
 instalada arranque en Windows, Linux y macOS. Si todos los trabajos terminan
-correctamente, el workflow crea una GitHub Release con los instaladores `.msi`,
-`.deb` y `.pkg` adjuntos. También puedes iniciar el workflow manualmente para
-probar la creación e instalación sin publicar una release.
+correctamente, el workflow crea una GitHub Release con los instaladores
+`.exe`/`.msi`, `.deb` y `.pkg` adjuntos. También puedes iniciar el workflow
+manualmente para probar la creación e instalación sin publicar una release.
 
 Para publicar una nueva versión desde la terminal:
 
 ```bash
 git switch main
 git pull
-git tag v1.0.2
-git push origin v1.0.2
+git tag v1.0.3
+git push origin v1.0.3
 ```
 
 Los instaladores incluyen Java 25 y JavaFX 21.0.6; no requieren que el usuario
-instale un JDK. **Ollama y al menos un modelo local deben instalarse por
-separado**. El workflow comprueba la instalación del paquete y el arranque de
-las vistas, pero no instala Ollama ni descarga modelos durante la instalación.
+instale un JDK. El instalador `.exe` instala MedSet AI, pero no instala otros
+programas. **Ollama y al menos un modelo local deben instalarse por separado**;
+los modelos ocupan varios GB y se descargan solo después de que el usuario los
+solicita. El workflow comprueba la instalación de cada paquete y el arranque de
+las vistas, pero no instala Ollama ni descarga modelos.
 
 Antes de publicar, confirma que el workflow **Build release installers** acabó
 con éxito en los tres sistemas operativos. No reutilices un tag de versión ya
