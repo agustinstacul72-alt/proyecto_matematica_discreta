@@ -30,7 +30,8 @@ class OllamaProviderTest {
             JsonNode request = objectMapper.readTree(exchange.getRequestBody());
             capturedRequests.add(request);
             byte[] response = (
-                    "{\"message\":{\"content\":\"Hola \"},\"done\":false}\n"
+                    "{\"message\":{\"thinking\":\"internal reasoning\",\"content\":\"\"},\"done\":false}\n"
+                            + "{\"message\":{\"content\":\"Hola \"},\"done\":false}\n"
                             + "{\"message\":{\"content\":\"mundo\"},\"done\":false}\n"
                             + "{\"message\":{\"content\":\"\"},\"done\":true}\n"
             ).getBytes(StandardCharsets.UTF_8);
@@ -62,6 +63,7 @@ class OllamaProviderTest {
             JsonNode firstRequest = capturedRequests.get(0);
             assertEquals("test-model", firstRequest.path("model").asText());
             assertTrue(firstRequest.path("stream").asBoolean());
+            assertEquals(false, firstRequest.path("think").asBoolean());
             assertEquals(512, firstRequest
                     .path("options")
                     .path("num_predict")

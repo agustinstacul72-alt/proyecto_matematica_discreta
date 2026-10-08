@@ -100,6 +100,7 @@ public class OllamaProvider implements AiProvider {
                             model,
                             new OllamaMessage("user", prompt),
                             true,
+                            false,
                             "10m",
                             new OllamaOptions(512, 0.4)
                     )
@@ -196,6 +197,7 @@ public class OllamaProvider implements AiProvider {
             String model,
             OllamaMessage[] messages,
             boolean stream,
+            boolean think,
             String keep_alive,
             OllamaOptions options
     ) {
@@ -204,6 +206,7 @@ public class OllamaProvider implements AiProvider {
                 String model,
                 OllamaMessage message,
                 boolean stream,
+                boolean think,
                 String keepAlive,
                 OllamaOptions options
         ) {
@@ -211,6 +214,7 @@ public class OllamaProvider implements AiProvider {
                     model,
                     new OllamaMessage[]{message},
                     stream,
+                    think,
                     keepAlive,
                     options
             );

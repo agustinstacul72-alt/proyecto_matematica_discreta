@@ -89,11 +89,11 @@ public class DashboardController {
                 )
         );
 
-        assistantModelComboBox.setValue(GEMMA_MODEL_OPTION);
-        patientModelComboBox.setValue(GEMMA_MODEL_OPTION);
+        assistantModelComboBox.setValue(NEMOTRON_MODEL_OPTION);
+        patientModelComboBox.setValue(NEMOTRON_MODEL_OPTION);
 
         aiService = new AiService(
-                new OllamaProvider()
+                createProvider(NEMOTRON_MODEL_OPTION)
         );
     }
 

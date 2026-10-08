@@ -65,11 +65,12 @@ reglas clínicas o educativas.
 | `service/OllamaProvider.java` | Transmite respuestas NDJSON desde `{OLLAMA_URL}/api/chat` usando el modelo seleccionado. |
 
 El dashboard ofrece dos opciones de Ollama local: Gemma 3 4B y Nemotron 3 Nano
-4B. Cada selección crea un proveedor Ollama con su nombre y etiqueta de modelo.
-Las solicitudes se ejecutan en un hilo de `CompletableFuture`, evitando
-bloquear el hilo de interfaz. Las respuestas se transmiten en fragmentos;
-Ollama limita la salida a 512 tokens y conserva el modelo cargado durante diez
-minutos.
+4B (predeterminado). Cada selección crea un proveedor Ollama con su nombre y
+etiqueta de modelo. Las solicitudes se ejecutan en un hilo de
+`CompletableFuture`, evitando bloquear el hilo de interfaz. Las respuestas se
+transmiten en fragmentos; Ollama limita la salida a 512 tokens, desactiva el
+razonamiento de Nemotron para mostrar directamente la respuesta y conserva el
+modelo cargado durante diez minutos.
 
 La gestión de errores del chat muestra el error en la conversación. Los dos
 modelos deben estar instalados en Ollama antes de usarlos; no se requiere una

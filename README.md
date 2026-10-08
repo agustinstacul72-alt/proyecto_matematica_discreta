@@ -40,7 +40,7 @@ Maven, recursos, documentación y una plantilla segura de configuración local.
 - Pantalla de bienvenida y pantalla informativa del proyecto.
 - Dashboard con chat conectado a los modelos de Ollama y un formulario de
   paciente en desarrollo.
-- Dos modelos locales de Ollama: Gemma 3 4B y Nemotron 3 Nano 4B.
+- Dos modelos locales de Ollama: Gemma 3 4B y Nemotron 3 Nano 4B (predeterminado).
 - Configuración de los modelos locales mediante archivo `.env`.
 - Los modelos `Patient`, `Symptom`, `Pattern` y `AnalysisResult` son
   actualmente marcadores vacíos.
@@ -97,7 +97,8 @@ Ollama todavía lo está cargando.
 
 Ambos modelos transmiten las respuestas mientras se generan para que el
 texto empiece a aparecer antes de que termine la respuesta completa. Ollama
-conserva cada modelo cargado durante diez minutos.
+desactiva el razonamiento visible de Nemotron para que los 512 tokens de salida
+se usen en la respuesta y conserva cada modelo cargado durante diez minutos.
 
 ## Verificación
 
