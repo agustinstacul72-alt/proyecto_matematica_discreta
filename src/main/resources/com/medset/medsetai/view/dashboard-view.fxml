@@ -51,7 +51,7 @@
             <Label text="DASHBOARD"
                    styleClass="sidebar-title"/>
 
-            <Button text="🤖  AI Assistant"
+            <Button text="🤖  Ollama Assistant"
                     onAction="#showAssistant"
                     maxWidth="Infinity"
                     styleClass="sidebar-button"/>
@@ -79,7 +79,7 @@
 
                 <VBox spacing="5">
 
-                    <Label text="AI Assistant"
+                    <Label text="Ollama Assistant"
                            styleClass="panel-title"/>
 
                     <Label text="Ask questions about set theory, mathematics, or the MedSet AI project."
@@ -115,16 +115,16 @@
                 </ScrollPane>
 
 
-                <!-- PROVIDER -->
+                <!-- OLLAMA MODEL -->
                 <HBox alignment="CENTER_LEFT"
                       spacing="10">
 
-                    <Label text="AI Provider:"
+                    <Label text="Ollama Model:"
                            styleClass="field-label"/>
 
-                    <ComboBox fx:id="assistantProviderComboBox"
-                              prefWidth="180"
-                              styleClass="provider-combo"/>
+                    <ComboBox fx:id="assistantModelComboBox"
+                              prefWidth="270"
+                              styleClass="model-combo"/>
 
                 </HBox>
 
@@ -223,12 +223,12 @@
                 <HBox alignment="CENTER_LEFT"
                       spacing="10">
 
-                    <Label text="AI Model:"
+                    <Label text="Ollama Model:"
                            styleClass="field-label"/>
 
-                    <ComboBox fx:id="patientProviderComboBox"
-                              prefWidth="180"
-                              styleClass="provider-combo"/>
+                    <ComboBox fx:id="patientModelComboBox"
+                              prefWidth="270"
+                              styleClass="model-combo"/>
 
                 </HBox>
 

@@ -7,7 +7,7 @@
 
     <groupId>com.medset</groupId>
     <artifactId>medset-ai</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0.3</version>
     <name>MedSet AI</name>
 
     <properties>
@@ -82,12 +82,6 @@
         </dependency>
 
         <dependency>
-            <groupId>com.google.genai</groupId>
-            <artifactId>google-genai</artifactId>
-            <version>1.67.0</version>
-        </dependency>
-
-        <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
             <version>2.20.0</version>
@@ -133,7 +127,7 @@
 
                         <configuration>
                             <mainClass>
-                                com.medset.medsetai/com.medset.medsetai.MedSetApplication
+                                com.medset.medsetai.Launcher
                             </mainClass>
 
                             <launcher>app</launcher>

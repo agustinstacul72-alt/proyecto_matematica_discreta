@@ -22,6 +22,7 @@ public class OllamaProvider implements AiProvider {
 
     private final String url;
     private final String model;
+    private final String name;
 
     public OllamaProvider() {
         this(
@@ -30,7 +31,26 @@ public class OllamaProvider implements AiProvider {
                         .build(),
                 new ObjectMapper(),
                 AppConfig.getOllamaUrl(),
-                AppConfig.getOllamaModel()
+                AppConfig.getOllamaModel(),
+                "Ollama · Gemma 3 4B"
+        );
+    }
+
+    /**
+     * Creates an Ollama provider for the selected locally available model.
+     *
+     * @param model Ollama model tag, such as {@code nemotron-3-nano:4b}
+     * @param name display name shown in the conversation
+     */
+    public OllamaProvider(String model, String name) {
+        this(
+                HttpClient.newBuilder()
+                        .connectTimeout(Duration.ofSeconds(5))
+                        .build(),
+                new ObjectMapper(),
+                AppConfig.getOllamaUrl(),
+                model,
+                name
         );
     }
 
@@ -40,10 +60,21 @@ public class OllamaProvider implements AiProvider {
             String url,
             String model
     ) {
+        this(httpClient, objectMapper, url, model, "Ollama");
+    }
+
+    OllamaProvider(
+            HttpClient httpClient,
+            ObjectMapper objectMapper,
+            String url,
+            String model,
+            String name
+    ) {
         this.httpClient = Objects.requireNonNull(httpClient, "httpClient");
         this.objectMapper = Objects.requireNonNull(objectMapper, "objectMapper");
         this.url = Objects.requireNonNull(url, "url").replaceAll("/+$", "");
         this.model = Objects.requireNonNull(model, "model");
+        this.name = Objects.requireNonNull(name, "name");
     }
 
     @Override
@@ -69,6 +100,7 @@ public class OllamaProvider implements AiProvider {
                             model,
                             new OllamaMessage("user", prompt),
                             true,
+                            false,
                             "10m",
                             new OllamaOptions(512, 0.4)
                     )
@@ -158,13 +190,14 @@ public class OllamaProvider implements AiProvider {
 
     @Override
     public String getName() {
-        return "Ollama";
+        return name;
     }
 
     private record OllamaRequest(
             String model,
             OllamaMessage[] messages,
             boolean stream,
+            boolean think,
             String keep_alive,
             OllamaOptions options
     ) {
@@ -173,6 +206,7 @@ public class OllamaProvider implements AiProvider {
                 String model,
                 OllamaMessage message,
                 boolean stream,
+                boolean think,
                 String keepAlive,
                 OllamaOptions options
         ) {
@@ -180,6 +214,7 @@ public class OllamaProvider implements AiProvider {
                     model,
                     new OllamaMessage[]{message},
                     stream,
+                    think,
                     keepAlive,
                     options
             );

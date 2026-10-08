@@ -1,0 +1,198 @@
+name: Build release installers
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Release version, for example 1.0.0
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  package:
+    name: Package and install on ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: windows-latest
+            installer: msi
+          - os: windows-latest
+            installer: exe
+          - os: ubuntu-latest
+            installer: deb
+          - os: macos-latest
+            installer: pkg
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Java 25
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "25"
+          cache: maven
+
+      - name: Install WiX Toolset
+        if: runner.os == 'Windows'
+        shell: powershell
+        run: |
+          choco install wixtoolset --yes --no-progress
+          $wix = Get-ChildItem "C:\Program Files (x86)\WiX Toolset*" |
+            Sort-Object Name -Descending |
+            Select-Object -First 1
+          if (-not $wix) { throw "WiX Toolset installation was not found." }
+          "$($wix.FullName)\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+
+      - name: Install Linux GUI smoke-test dependencies
+        if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install --yes xvfb
+
+      - name: Run Maven tests and prepare dependencies on Windows
+        if: runner.os == 'Windows'
+        shell: powershell
+        run: |
+          .\mvnw.cmd --batch-mode --no-transfer-progress test package dependency:copy-dependencies '-DincludeScope=runtime' '-DoutputDirectory=target/package-input'
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+      - name: Run Maven tests and prepare dependencies on macOS and Linux
+        if: runner.os != 'Windows'
+        shell: bash
+        run: |
+          bash ./mvnw --batch-mode --no-transfer-progress test package dependency:copy-dependencies "-DincludeScope=runtime" "-DoutputDirectory=target/package-input"
+
+      - name: Add application jar to installer input
+        shell: bash
+        run: |
+          cp target/medset-ai-1.0.3.jar target/package-input/medset-ai.jar
+
+      - name: Create and smoke-test native application image
+        shell: bash
+        run: |
+          jpackage --type app-image --name MedSetAI \
+            --input target/package-input \
+            --main-jar medset-ai.jar \
+            --main-class com.medset.medsetai.Launcher \
+            --dest target/app-image
+          if [[ "$RUNNER_OS" == "Windows" ]]; then
+            target/app-image/MedSetAI/MedSetAI.exe --smoke-test
+          elif [[ "$RUNNER_OS" == "macOS" ]]; then
+            target/app-image/MedSetAI.app/Contents/MacOS/MedSetAI --smoke-test
+          else
+            xvfb-run --auto-servernum target/app-image/MedSetAI/bin/MedSetAI --smoke-test
+          fi
+
+      - name: Set release version
+        shell: bash
+        run: |
+          if [[ "$GITHUB_REF_TYPE" == "tag" ]]; then
+            echo "APP_VERSION=${GITHUB_REF_NAME#v}" >> "$GITHUB_ENV"
+          else
+            echo "APP_VERSION=${{ inputs.version }}" >> "$GITHUB_ENV"
+          fi
+
+      - name: Create native installer
+        shell: bash
+        run: |
+          args=(
+            --type "${{ matrix.installer }}"
+            --name MedSetAI
+            --input target/package-input
+            --main-jar medset-ai.jar
+            --main-class com.medset.medsetai.Launcher
+            --app-version "$APP_VERSION"
+            --vendor "MedSet AI - Group 6"
+            --dest target/installers
+          )
+          if [[ "$RUNNER_OS" == "Windows" ]]; then
+            args+=(--win-menu --win-shortcut --win-per-user-install)
+          fi
+          jpackage "${args[@]}"
+
+      - name: Install and smoke-test Windows installer
+        if: runner.os == 'Windows'
+        shell: powershell
+        env:
+          INSTALLER_TYPE: ${{ matrix.installer }}
+        run: |
+          $installer = Get-ChildItem "target\installers\*.$env:INSTALLER_TYPE" | Select-Object -First 1
+          if (-not $installer) { throw "$env:INSTALLER_TYPE installer was not generated." }
+          $installLog = Join-Path $env:RUNNER_TEMP "MedSetAI-$env:INSTALLER_TYPE-install.log"
+          if ($env:INSTALLER_TYPE -eq "msi") {
+            $install = Start-Process msiexec.exe -ArgumentList @("/i", $installer.FullName, "/qn", "/norestart", "/l*v", $installLog) -Wait -PassThru
+          } else {
+            $install = Start-Process $installer.FullName -ArgumentList @("/quiet", "/norestart", "/log", $installLog) -Wait -PassThru
+          }
+          if ($install.ExitCode -notin @(0, 3010)) { throw "$env:INSTALLER_TYPE installation failed with exit code $($install.ExitCode)." }
+          $uninstallRoots = @(
+            "HKCU:\Software\Microsoft\Windows\CurrentVersion\Uninstall\*",
+            "HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\*",
+            "HKLM:\Software\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall\*"
+          )
+          $installLocations = Get-ItemProperty $uninstallRoots -ErrorAction SilentlyContinue |
+            Where-Object { $_.DisplayName -like "*MedSet*" } |
+            ForEach-Object { $_.InstallLocation } |
+            Where-Object { $_ -and (Test-Path $_) }
+          $searchRoots = @(
+            $installLocations
+            "$env:LOCALAPPDATA\Programs"
+            $env:LOCALAPPDATA
+            (Join-Path $env:ProgramFiles "MedSetAI")
+            (Join-Path ([Environment]::GetEnvironmentVariable("ProgramFiles(x86)")) "MedSetAI")
+          ) | Where-Object { $_ -and (Test-Path $_) } | Select-Object -Unique
+          $app = Get-ChildItem -Path $searchRoots -Filter MedSetAI.exe -File -Recurse -ErrorAction SilentlyContinue |
+            Select-Object -First 1
+          if (-not $app) {
+            Get-Content $installLog -Tail 40
+            throw "Installed application executable was not found. MSI log: $installLog"
+          }
+          $smoke = Start-Process $app.FullName -ArgumentList "--smoke-test" -Wait -PassThru
+          if ($smoke.ExitCode -ne 0) { throw "Installed application smoke test failed with exit code $($smoke.ExitCode)." }
+
+      - name: Install and smoke-test Linux package
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get install --yes ./target/installers/*.deb
+          xvfb-run --auto-servernum /opt/medsetai/bin/MedSetAI --smoke-test
+
+      - name: Install and smoke-test macOS package
+        if: runner.os == 'macOS'
+        run: |
+          sudo installer -pkg target/installers/*.pkg -target /
+          "/Applications/MedSetAI.app/Contents/MacOS/MedSetAI" --smoke-test
+
+      - name: Upload installer artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: MedSetAI-${{ runner.os }}-${{ matrix.installer }}
+          path: target/installers/*
+          if-no-files-found: error
+          retention-days: 30
+
+  publish:
+    name: Publish GitHub release
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: package
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Download verified installers
+        uses: actions/download-artifact@v4
+        with:
+          path: release-assets
+          merge-multiple: true
+
+      - name: Create release and attach installers
+        uses: softprops/action-gh-release@v2
+        with:
+          generate_release_notes: true
+          files: release-assets/*

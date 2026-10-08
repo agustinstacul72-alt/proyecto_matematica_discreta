@@ -11,6 +11,7 @@ import java.net.http.HttpClient;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -24,11 +25,13 @@ class OllamaProviderTest {
                 new InetSocketAddress("127.0.0.1", 0),
                 0
         );
-        JsonNode[] capturedRequest = new JsonNode[1];
+        List<JsonNode> capturedRequests = new CopyOnWriteArrayList<>();
         server.createContext("/api/chat", exchange -> {
-            capturedRequest[0] = objectMapper.readTree(exchange.getRequestBody());
+            JsonNode request = objectMapper.readTree(exchange.getRequestBody());
+            capturedRequests.add(request);
             byte[] response = (
-                    "{\"message\":{\"content\":\"Hola \"},\"done\":false}\n"
+                    "{\"message\":{\"thinking\":\"internal reasoning\",\"content\":\"\"},\"done\":false}\n"
+                            + "{\"message\":{\"content\":\"Hola \"},\"done\":false}\n"
                             + "{\"message\":{\"content\":\"mundo\"},\"done\":false}\n"
                             + "{\"message\":{\"content\":\"\"},\"done\":true}\n"
             ).getBytes(StandardCharsets.UTF_8);
@@ -57,12 +60,33 @@ class OllamaProviderTest {
 
             assertEquals("Hola mundo", response);
             assertEquals(List.of("Hola ", "mundo"), fragments);
-            assertEquals("test-model", capturedRequest[0].path("model").asText());
-            assertTrue(capturedRequest[0].path("stream").asBoolean());
-            assertEquals(512, capturedRequest[0]
+            JsonNode firstRequest = capturedRequests.get(0);
+            assertEquals("test-model", firstRequest.path("model").asText());
+            assertTrue(firstRequest.path("stream").asBoolean());
+            assertEquals(false, firstRequest.path("think").asBoolean());
+            assertEquals(512, firstRequest
                     .path("options")
                     .path("num_predict")
                     .asInt());
+
+            OllamaProvider nemotron = new OllamaProvider(
+                    HttpClient.newHttpClient(),
+                    objectMapper,
+                    "http://127.0.0.1:" + server.getAddress().getPort(),
+                    "nemotron-3-nano:4b",
+                    "Ollama · Nemotron 3 Nano 4B"
+            );
+            assertEquals(
+                    "Ollama · Nemotron 3 Nano 4B",
+                    nemotron.getName()
+            );
+            nemotron.generate("test prompt", ignored -> { });
+            assertEquals(
+                    List.of("test-model", "nemotron-3-nano:4b"),
+                    capturedRequests.stream()
+                            .map(request -> request.path("model").asText())
+                            .toList()
+            );
         } finally {
             server.stop(0);
         }

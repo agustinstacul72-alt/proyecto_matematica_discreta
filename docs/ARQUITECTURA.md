@@ -5,7 +5,7 @@
 MedSet AI es una aplicación Java de escritorio con JavaFX y vistas FXML. La
 clase `MedSetApplication` crea la ventana inicial; los controladores gestionan
 la navegación; `SceneManager` sustituye las escenas; y los servicios aíslan la
-comunicación con proveedores de IA.
+comunicación con modelos de IA.
 
 El proyecto se encuentra en desarrollo. Esta guía describe lo que hace el
 código actual y señala las partes que todavía son estructuras iniciales, no
@@ -60,41 +60,38 @@ reglas clínicas o educativas.
 
 | Clase | Responsabilidad |
 | --- | --- |
-| `service/AiProvider.java` | Contrato común: generar una respuesta de texto y exponer el nombre del proveedor. |
-| `service/AiService.java` | Fachada del proveedor seleccionado; permite enviar un prompt, consultar el nombre y reemplazar el proveedor. |
-| `service/GeminiProvider.java` | Transmite respuestas del modelo Gemini con la biblioteca `google-genai`. Requiere `GEMINI_API_KEY`. |
-| `service/OllamaProvider.java` | Transmite respuestas NDJSON desde `{OLLAMA_URL}/api/chat`. |
+| `service/AiProvider.java` | Contrato común para generar respuestas de texto y exponer un nombre. |
+| `service/AiService.java` | Fachada del modelo seleccionado; permite enviar prompts y reemplazar el proveedor activo. |
+| `service/OllamaProvider.java` | Transmite respuestas NDJSON desde `{OLLAMA_URL}/api/chat` usando el modelo seleccionado. |
 
-El dashboard crea un `AiService` con Ollama por defecto. El selector del chat
-permite cambiar entre Ollama y Gemini. Las solicitudes se ejecutan en un hilo
-de `CompletableFuture`, evitando bloquear el hilo de interfaz. Ambos proveedores
-transmiten fragmentos a medida que se generan. Ollama limita la salida a 512
-tokens y conserva el modelo cargado durante diez minutos. Gemini usa
-`gemini-2.5-flash`, limita la salida y desactiva el razonamiento ampliado para
-reducir la demora en respuestas conversacionales.
+El dashboard ofrece dos opciones de Ollama local: Gemma 3 4B y Nemotron 3 Nano
+4B (predeterminado). Cada selección crea un proveedor Ollama con su nombre y
+etiqueta de modelo. Las solicitudes se ejecutan en un hilo de
+`CompletableFuture`, evitando bloquear el hilo de interfaz. Las respuestas se
+transmiten en fragmentos; Ollama limita la salida a 512 tokens, desactiva el
+razonamiento de Nemotron para mostrar directamente la respuesta y conserva el
+modelo cargado durante diez minutos.
 
-La gestión de errores del chat muestra el error en la conversación. La selección
-Gemini requiere una clave API válida y un nombre de modelo disponible. La
-configuración de Gemini se crea en el hilo de trabajo, por lo que una clave
-ausente o inválida no bloquea la interfaz.
+La gestión de errores del chat muestra el error en la conversación. Los dos
+modelos deben estar instalados en Ollama antes de usarlos; no se requiere una
+clave de API.
 
 ## Configuración
 
-`util/AppConfig.java` carga el archivo `.env` en la raíz mediante `dotenv-java`.
-`GEMINI_API_KEY` no tiene valor predeterminado y produce una excepción si falta
-cuando se solicita. Las otras propiedades tienen los valores predeterminados
-descritos en el README. La biblioteca de dotenv está configurada para ignorar
-que el archivo `.env` no exista; las claves opcionales entonces usan sus valores
-predeterminados.
+`util/AppConfig.java` carga el archivo `.env` en la raíz mediante `dotenv-java`
+y define la URL y ambos modelos de Ollama con valores predeterminados. La
+biblioteca de dotenv está configurada para ignorar que el archivo `.env` no
+exista; las claves opcionales entonces usan sus valores predeterminados.
 
 Usa `.env.example` como plantilla. `.env` y otros archivos `.env.*` están
-ignorados por Git; `.env.example` es la excepción que sí se versiona.
+ignorados por Git; `.env.example` es la excepción que sí se versiona. La
+aplicación consulta el servidor local de Ollama y no necesita claves de API.
 
 ## Dependencias y compilación
 
 `pom.xml` define el artefacto Maven, Java 25, el plugin de JavaFX y las
-dependencias JavaFX, ControlsFX, FormsFX, Ikonli, BootstrapFX, Google GenAI,
-Jackson, dotenv-java y JUnit 5.
+dependencias JavaFX, ControlsFX, FormsFX, Ikonli, BootstrapFX, Jackson,
+dotenv-java y JUnit 5.
 
 Comandos de uso habitual:
 

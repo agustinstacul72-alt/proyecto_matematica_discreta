@@ -1,9 +1,8 @@
 package com.medset.medsetai.controller;
 
 import com.medset.medsetai.service.AiService;
-import com.medset.medsetai.service.AiProvider;
-import com.medset.medsetai.service.GeminiProvider;
 import com.medset.medsetai.service.OllamaProvider;
+import com.medset.medsetai.util.AppConfig;
 import com.medset.medsetai.util.SceneManager;
 
 import javafx.application.Platform;
@@ -25,13 +24,16 @@ import java.util.concurrent.CompletionException;
 import java.util.concurrent.CompletableFuture;
 
 /**
- * Connects the dashboard views to AI chat, provider selection, and patient
+ * Connects the dashboard views to Ollama model selection, chat, and patient
  * workflow actions.
  *
  * <p>Patient report and graph actions are placeholders; they do not perform
  * analysis or render a chart yet.</p>
  */
 public class DashboardController {
+
+    private static final String GEMMA_MODEL_OPTION = "Gemma 3 4B (Ollama local)";
+    private static final String NEMOTRON_MODEL_OPTION = "Nemotron 3 Nano 4B (Ollama local)";
 
     @FXML
     private VBox assistantPanel;
@@ -46,10 +48,10 @@ public class DashboardController {
     private ScrollPane chatScrollPane;
 
     @FXML
-    private ComboBox<String> assistantProviderComboBox;
+    private ComboBox<String> assistantModelComboBox;
 
     @FXML
-    private ComboBox<String> patientProviderComboBox;
+    private ComboBox<String> patientModelComboBox;
 
     @FXML
     private TextField messageField;
@@ -73,25 +75,25 @@ public class DashboardController {
     @FXML
     private void initialize() {
 
-        assistantProviderComboBox.setItems(
+        assistantModelComboBox.setItems(
                 FXCollections.observableArrayList(
-                        "Ollama",
-                        "Gemini"
+                        GEMMA_MODEL_OPTION,
+                        NEMOTRON_MODEL_OPTION
                 )
         );
 
-        patientProviderComboBox.setItems(
+        patientModelComboBox.setItems(
                 FXCollections.observableArrayList(
-                        "Ollama",
-                        "Gemini"
+                        GEMMA_MODEL_OPTION,
+                        NEMOTRON_MODEL_OPTION
                 )
         );
 
-        assistantProviderComboBox.setValue("Ollama");
-        patientProviderComboBox.setValue("Ollama");
+        assistantModelComboBox.setValue(NEMOTRON_MODEL_OPTION);
+        patientModelComboBox.setValue(NEMOTRON_MODEL_OPTION);
 
         aiService = new AiService(
-                new OllamaProvider()
+                createProvider(NEMOTRON_MODEL_OPTION)
         );
     }
 
@@ -144,20 +146,25 @@ public class DashboardController {
 
 
     /**
-     * Replaces the active provider according to the selected display name.
+     * Replaces the active provider according to the selected Ollama model.
      *
-     * @param providerName selected provider name; names other than {@code Gemini}
-     *                     select Ollama
+     * @param modelOption selected Ollama model name
      */
-    private void updateProvider(String providerName) {
-        aiService.setProvider(createProvider(providerName));
+    private void updateProvider(String modelOption) {
+        aiService.setProvider(createProvider(modelOption));
     }
 
-    private AiProvider createProvider(String providerName) {
-        if ("Gemini".equals(providerName)) {
-            return new GeminiProvider();
+    private OllamaProvider createProvider(String modelOption) {
+        if (NEMOTRON_MODEL_OPTION.equals(modelOption)) {
+            return new OllamaProvider(
+                    AppConfig.getOllamaNemotronModel(),
+                    "Ollama · Nemotron 3 Nano 4B"
+            );
         }
-        return new OllamaProvider();
+        return new OllamaProvider(
+                AppConfig.getOllamaModel(),
+                "Ollama · Gemma 3 4B"
+        );
     }
 
 
@@ -176,8 +183,7 @@ public class DashboardController {
 
         message = message.trim();
 
-        String selectedProviderName =
-                assistantProviderComboBox.getValue();
+        String selectedModelOption = assistantModelComboBox.getValue();
 
         addUserMessage(message);
 
@@ -187,13 +193,13 @@ public class DashboardController {
 
         Label responseLabel = addAiMessage(
                 "Pensando...",
-                selectedProviderName
+                selectedModelOption
         );
 
         CompletableFuture
                 .supplyAsync(() -> {
                     AiService requestService = new AiService(
-                            createProvider(selectedProviderName)
+                            createProvider(selectedModelOption)
                     );
                     return requestService.ask(finalMessage, fragment ->
                             Platform.runLater(() -> {
@@ -274,14 +280,14 @@ public class DashboardController {
      *
      * @param message response or status text to display
      */
-    private Label addAiMessage(String message, String providerName) {
+    private Label addAiMessage(String message, String modelName) {
 
         VBox messageBox = new VBox(4);
 
         messageBox.getStyleClass()
                 .add("ai-message");
 
-        Label sender = new Label(providerName);
+        Label sender = new Label(modelName);
 
         sender.getStyleClass()
                 .add("message-sender");
@@ -328,7 +334,7 @@ public class DashboardController {
         }
 
         String provider =
-                patientProviderComboBox.getValue();
+                patientModelComboBox.getValue();
 
         updateProvider(provider);
 

@@ -38,23 +38,40 @@ Maven, recursos, documentación y una plantilla segura de configuración local.
 ## Estado actual
 
 - Pantalla de bienvenida y pantalla informativa del proyecto.
-- Dashboard con chat conectado a los proveedores de IA y un formulario de
+- Dashboard con chat conectado a los modelos de Ollama y un formulario de
   paciente en desarrollo.
-- Abstracción de proveedores de IA, con implementaciones para Gemini y Ollama.
-- Configuración local de proveedores mediante archivo `.env`.
+- Dos modelos locales de Ollama: Gemma 3 4B y Nemotron 3 Nano 4B (predeterminado).
+- Configuración de los modelos locales mediante archivo `.env`.
 - Los modelos `Patient`, `Symptom`, `Pattern` y `AnalysisResult` son
   actualmente marcadores vacíos.
 - La generación de informes de paciente y gráficos aún son acciones
   provisionales; consulta [`docs/ARQUITECTURA.md`](docs/ARQUITECTURA.md).
 
-## Requisitos
+## Versiones y requisitos
 
-- JDK 25.
-- Maven Wrapper incluido en el repositorio (no hace falta instalar Maven).
-- Conexión a internet para descargar dependencias la primera vez.
-- Para usar Gemini: una clave de API.
-- Para usar Ollama: un servidor Ollama local o accesible y el modelo configurado
-  descargado en ese servidor.
+| Componente | Versión para esta release | ¿Se incluye en el instalador? |
+| --- | --- | --- |
+| MedSet AI | `1.0.3` | Sí |
+| Java | 25 | Sí, como runtime privado de la aplicación |
+| JavaFX | 21.0.6 | Sí, junto con la aplicación |
+| Ollama | `0.40.1` fue la versión probada durante el desarrollo | No |
+| Gemma | `gemma3:4b` | No; se descarga en Ollama |
+| Nemotron | `nemotron-3-nano:4b` | No; se descarga en Ollama |
+
+Para **usar el chat de IA**, instala Ollama y descarga al menos uno de los dos
+modelos. La aplicación y sus instaladores no instalan Ollama ni descargan
+modelos automáticamente: son componentes separados y los modelos ocupan varios
+GB. La aplicación puede abrirse sin Ollama, pero el chat no podrá responder
+hasta que Ollama esté instalado, ejecutándose y tenga disponible el modelo
+seleccionado.
+
+El instalador nativo no requiere que instales Java ni Maven. JDK 25 y conexión
+a internet para descargar dependencias solo hacen falta si vas a compilar o
+ejecutar el proyecto desde el código fuente.
+
+Las versiones `gemma3:4b` y `nemotron-3-nano:4b` son etiquetas de modelo de
+Ollama; Ollama puede actualizar los archivos asociados a esas etiquetas al
+descargarlos. No se fija aquí un hash inmutable del modelo.
 
 ## Ejecutar
 
@@ -70,33 +87,100 @@ En macOS o Linux:
 bash ./mvnw javafx:run
 ```
 
+## Descargar e instalar la aplicación
+
+Cuando haya una release publicada, abre
+[Releases](https://github.com/agustinstacul72-alt/proyecto_matematica_discreta/releases/latest)
+y descarga el instalador de tu sistema: `.exe` (recomendado) o `.msi` para
+Windows, `.deb` para Ubuntu/Linux o `.pkg` para macOS. Los paquetes son nativos
+de su sistema y no se pueden intercambiar entre Windows, Linux y macOS. Abre el
+instalador y sigue sus pasos para instalar MedSet AI.
+
+### Preparar Ollama para el chat
+
+1. Instala Ollama desde la [página oficial de descarga](https://ollama.com/download)
+   y abre/inicia Ollama para que el servicio local quede activo. En Linux, sigue
+   las instrucciones oficiales de instalación para tu distribución.
+2. Abre una terminal y descarga al menos el modelo que vayas a usar:
+
+   ```text
+   ollama pull nemotron-3-nano:4b
+   ollama pull gemma3:4b
+   ```
+
+   El segundo comando es opcional si solo quieres utilizar Nemotron. Cada modelo
+   se descarga por separado y ocupa espacio en disco; la descarga necesita
+   conexión a internet, pero las consultas posteriores se ejecutan localmente.
+3. Comprueba la instalación con `ollama --version` y
+   `ollama list`. Después abre MedSet AI y selecciona un modelo que aparezca en
+   esa lista.
+
+Durante el desarrollo se comprobó el uso de Ollama `0.40.1` con
+`nemotron-3-nano:4b`. La aplicación se conecta al servidor local en
+`http://localhost:11434` por defecto. Si Ollama usa otra dirección, configura
+`OLLAMA_URL` en el archivo `.env` del directorio desde el que se inicia la
+aplicación o en el entorno del sistema.
+
+## Crear instaladores de una release
+
+Al crear y subir un tag de versión (`v1.0.3`, por ejemplo), GitHub Actions
+ejecuta las pruebas, genera los instaladores nativos y comprueba que la aplicación
+instalada arranque en Windows, Linux y macOS. Si todos los trabajos terminan
+correctamente, el workflow crea una GitHub Release con los instaladores
+`.exe`/`.msi`, `.deb` y `.pkg` adjuntos. También puedes iniciar el workflow
+manualmente para probar la creación e instalación sin publicar una release.
+
+Para publicar una nueva versión desde la terminal:
+
+```bash
+git switch main
+git pull
+git tag v1.0.3
+git push origin v1.0.3
+```
+
+Los instaladores incluyen Java 25 y JavaFX 21.0.6; no requieren que el usuario
+instale un JDK. El instalador `.exe` instala MedSet AI, pero no instala otros
+programas. **Ollama y al menos un modelo local deben instalarse por separado**;
+los modelos ocupan varios GB y se descargan solo después de que el usuario los
+solicita. El workflow comprueba la instalación de cada paquete y el arranque de
+las vistas, pero no instala Ollama ni descarga modelos.
+
+Antes de publicar, confirma que el workflow **Build release installers** acabó
+con éxito en los tres sistemas operativos. No reutilices un tag de versión ya
+publicado.
+
 La aplicación se inicia desde
 `com.medset.medsetai.MedSetApplication`. `Main.java` se conserva como un
 lanzador de compatibilidad para quienes ejecuten la clase `Main` desde un IDE.
 
-## Configuración de IA
+## Configuración de Ollama desde el código fuente
 
 1. Copia `.env.example` a `.env` en la raíz del proyecto.
-2. Si usarás Gemini, reemplaza `GEMINI_API_KEY` con tu clave. No la compartas ni
-   la subas al repositorio.
-3. Ajusta opcionalmente los nombres de modelo y la URL de Ollama.
+2. Instala e inicia Ollama y descarga uno o ambos modelos:
+
+   ```text
+   ollama pull gemma3:4b
+   ollama pull nemotron-3-nano:4b
+   ```
+
+3. Ajusta opcionalmente la dirección y los nombres de los modelos en `.env`.
 
 | Variable | Uso | Valor predeterminado |
 | --- | --- | --- |
-| `GEMINI_API_KEY` | Clave de Gemini; requerida al crear `GeminiProvider` | Sin valor |
-| `GEMINI_MODEL` | Identificador del modelo Gemini | `gemini-2.5-flash` |
 | `OLLAMA_URL` | Dirección base del servidor Ollama | `http://localhost:11434` |
-| `OLLAMA_MODEL` | Modelo disponible en Ollama | `gemma3:4b` |
+| `OLLAMA_MODEL` | Primer modelo local | `gemma3:4b` |
+| `OLLAMA_NEMOTRON_MODEL` | Segundo modelo local | `nemotron-3-nano:4b` |
 
-La configuración actual se lee del archivo `.env`; no agregues credenciales a
-los archivos Java, FXML, README o commits.
+Ambas opciones se ejecutan a través del servidor Ollama local; no requieren una
+clave de API ni activar facturación de una API en la nube. Cada modelo debe
+descargarse antes de seleccionarlo. La primera consulta puede tardar más si
+Ollama todavía lo está cargando.
 
-Ambos proveedores transmiten las respuestas mientras se generan para que el
-texto empiece a aparecer antes de que termine la respuesta completa. Gemini
-usa el modelo Flash y limita el razonamiento y la longitud de salida para
-reducir la espera. Ollama conserva el modelo cargado durante diez minutos;
-la primera consulta puede tardar más si el modelo aún no está descargado o
-cargado.
+Ambos modelos transmiten las respuestas mientras se generan para que el
+texto empiece a aparecer antes de que termine la respuesta completa. Ollama
+desactiva el razonamiento visible de Nemotron para que los 512 tokens de salida
+se usen en la respuesta y conserva cada modelo cargado durante diez minutos.
 
 ## Verificación
 
