@@ -1,5 +1,7 @@
 package com.medset.medsetai.service;
 
+import java.util.function.Consumer;
+
 /**
  * Facade for delegating prompts to the currently selected AI provider.
  */
@@ -24,6 +26,18 @@ public class AiService {
      */
     public String ask(String prompt) {
         return provider.generate(prompt);
+    }
+
+    /**
+     * Sends a prompt to the current provider and reports response fragments.
+     *
+     * @param prompt text to send
+     * @param onText consumer for generated response fragments
+     * @return complete generated response
+     */
+    public String ask(String prompt, Consumer<String> onText) {
+        AiProvider selectedProvider = provider;
+        return selectedProvider.generate(prompt, onText);
     }
 
     /**

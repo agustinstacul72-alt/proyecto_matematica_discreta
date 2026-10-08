@@ -25,9 +25,11 @@ public final class AppConfig {
 
         String value = DOTENV.get("GEMINI_API_KEY");
 
-        if (value == null || value.isBlank()) {
+        if (value == null
+                || value.isBlank()
+                || "your_gemini_api_key_here".equalsIgnoreCase(value.trim())) {
             throw new IllegalStateException(
-                    "GEMINI_API_KEY no está configurada en .env"
+                    "Configura una clave válida en GEMINI_API_KEY dentro de .env"
             );
         }
 
@@ -37,13 +39,13 @@ public final class AppConfig {
     /**
      * Gets the Gemini model identifier.
      *
-     * @return configured model, or {@code gemini-3.8-flash}
+     * @return configured model, or {@code gemini-2.5-flash}
      */
     public static String getGeminiModel() {
 
         return getOrDefault(
                 "GEMINI_MODEL",
-                "gemini-3.8-flash"
+                "gemini-2.5-flash"
         );
     }
 

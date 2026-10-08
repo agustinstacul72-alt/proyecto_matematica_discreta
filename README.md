@@ -84,12 +84,19 @@ lanzador de compatibilidad para quienes ejecuten la clase `Main` desde un IDE.
 | Variable | Uso | Valor predeterminado |
 | --- | --- | --- |
 | `GEMINI_API_KEY` | Clave de Gemini; requerida al crear `GeminiProvider` | Sin valor |
-| `GEMINI_MODEL` | Identificador del modelo Gemini | `gemini-3.8-flash` |
+| `GEMINI_MODEL` | Identificador del modelo Gemini | `gemini-2.5-flash` |
 | `OLLAMA_URL` | Dirección base del servidor Ollama | `http://localhost:11434` |
 | `OLLAMA_MODEL` | Modelo disponible en Ollama | `gemma3:4b` |
 
 La configuración actual se lee del archivo `.env`; no agregues credenciales a
 los archivos Java, FXML, README o commits.
+
+Ambos proveedores transmiten las respuestas mientras se generan para que el
+texto empiece a aparecer antes de que termine la respuesta completa. Gemini
+usa el modelo Flash y limita el razonamiento y la longitud de salida para
+reducir la espera. Ollama conserva el modelo cargado durante diez minutos;
+la primera consulta puede tardar más si el modelo aún no está descargado o
+cargado.
 
 ## Verificación
 

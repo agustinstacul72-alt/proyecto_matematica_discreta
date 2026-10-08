@@ -6,13 +6,15 @@ import com.medset.medsetai.util.AppConfig;
 
 import java.io.IOException;
 import java.net.URI;
+import java.net.http.HttpTimeoutException;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.time.Duration;
+import java.util.Objects;
+import java.util.function.Consumer;
+import java.util.stream.Stream;
 
-/**
- * Generates text by making synchronous HTTP requests to an Ollama chat server.
- */
 public class OllamaProvider implements AiProvider {
 
     private final HttpClient httpClient;
@@ -21,72 +23,125 @@ public class OllamaProvider implements AiProvider {
     private final String url;
     private final String model;
 
-    /**
-     * Creates the provider using the Ollama URL and model from {@link AppConfig}.
-     */
     public OllamaProvider() {
+        this(
+                HttpClient.newBuilder()
+                        .connectTimeout(Duration.ofSeconds(5))
+                        .build(),
+                new ObjectMapper(),
+                AppConfig.getOllamaUrl(),
+                AppConfig.getOllamaModel()
+        );
+    }
 
-        this.httpClient = HttpClient.newHttpClient();
-        this.objectMapper = new ObjectMapper();
+    OllamaProvider(
+            HttpClient httpClient,
+            ObjectMapper objectMapper,
+            String url,
+            String model
+    ) {
+        this.httpClient = Objects.requireNonNull(httpClient, "httpClient");
+        this.objectMapper = Objects.requireNonNull(objectMapper, "objectMapper");
+        this.url = Objects.requireNonNull(url, "url").replaceAll("/+$", "");
+        this.model = Objects.requireNonNull(model, "model");
+    }
 
-        this.url = AppConfig.getOllamaUrl();
-        this.model = AppConfig.getOllamaModel();
+    @Override
+    public String generate(String prompt) {
+        return generate(prompt, ignored -> { });
     }
 
     /**
-     * Sends a non-streaming chat request to the configured Ollama server.
+     * Streams Ollama response fragments as newline-delimited JSON arrives.
      *
      * @param prompt user message to send
-     * @return response content from the server
-     * @throws RuntimeException if the request fails, is interrupted, or returns
-     *                          a non-success HTTP status
+     * @param onText consumer for generated response fragments
+     * @return complete response content
      */
     @Override
-    public String generate(String prompt) {
+    public String generate(String prompt, Consumer<String> onText) {
+        Objects.requireNonNull(prompt, "prompt");
+        Objects.requireNonNull(onText, "onText");
 
         try {
-
             String json = objectMapper.writeValueAsString(
                     new OllamaRequest(
                             model,
                             new OllamaMessage("user", prompt),
-                            false
+                            true,
+                            "10m",
+                            new OllamaOptions(512, 0.4)
                     )
             );
 
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(url + "/api/chat"))
+                    .timeout(Duration.ofMinutes(3))
                     .header("Content-Type", "application/json")
                     .POST(HttpRequest.BodyPublishers.ofString(json))
                     .build();
 
-            HttpResponse<String> response =
+            HttpResponse<Stream<String>> response =
                     httpClient.send(
                             request,
-                            HttpResponse.BodyHandlers.ofString()
+                            HttpResponse.BodyHandlers.ofLines()
                     );
 
-            if (response.statusCode() < 200 ||
-                    response.statusCode() >= 300) {
+            try (Stream<String> lines = response.body()) {
+                if (response.statusCode() < 200 || response.statusCode() >= 300) {
+                    String errorBody = lines
+                            .filter(line -> !line.isBlank())
+                            .reduce((first, next) -> first + "\n" + next)
+                            .orElse("sin detalles");
+                    throw new IllegalStateException(
+                            "Ollama respondió con HTTP " + response.statusCode()
+                                    + ": " + errorBody
+                    );
+                }
 
-                throw new RuntimeException(
-                        "Ollama respondió con HTTP "
-                                + response.statusCode()
-                );
+                StringBuilder responseText = new StringBuilder();
+                lines.filter(line -> !line.isBlank()).forEach(line -> {
+                    try {
+                        JsonNode root = objectMapper.readTree(line);
+                        if (root.hasNonNull("error")) {
+                            throw new IllegalStateException(
+                                    "Ollama: " + root.path("error").asText()
+                            );
+                        }
+
+                        String fragment = root.path("message")
+                                .path("content")
+                                .asText("");
+                        if (!fragment.isEmpty()) {
+                            responseText.append(fragment);
+                            onText.accept(fragment);
+                        }
+                    } catch (IOException e) {
+                        throw new IllegalStateException(
+                                "Ollama devolvió una respuesta JSON inválida.",
+                                e
+                        );
+                    }
+                });
+
+                if (responseText.isEmpty()) {
+                    throw new IllegalStateException(
+                            "Ollama devolvió una respuesta vacía. Verifica que el "
+                                    + "modelo '" + model + "' esté instalado y disponible."
+                    );
+                }
+                return responseText.toString();
             }
-
-            JsonNode root =
-                    objectMapper.readTree(response.body());
-
-            return root
-                    .path("message")
-                    .path("content")
-                    .asText();
-
-        } catch (IOException e) {
-
+        } catch (HttpTimeoutException e) {
             throw new RuntimeException(
-                    "No se pudo conectar con Ollama.",
+                    "Ollama tardó demasiado. Verifica que el servidor esté activo "
+                            + "y que el modelo '" + model + "' esté cargado.",
+                    e
+            );
+        } catch (IOException e) {
+            throw new RuntimeException(
+                    "No se pudo conectar con Ollama: "
+                            + e.getMessage(),
                     e
             );
 
@@ -101,39 +156,39 @@ public class OllamaProvider implements AiProvider {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String getName() {
         return "Ollama";
     }
 
-    /**
-     * JSON request body expected by the Ollama chat endpoint.
-     */
     private record OllamaRequest(
             String model,
             OllamaMessage[] messages,
-            boolean stream
+            boolean stream,
+            String keep_alive,
+            OllamaOptions options
     ) {
 
         private OllamaRequest(
                 String model,
                 OllamaMessage message,
-                boolean stream
+                boolean stream,
+                String keepAlive,
+                OllamaOptions options
         ) {
             this(
                     model,
                     new OllamaMessage[]{message},
-                    stream
+                    stream,
+                    keepAlive,
+                    options
             );
         }
     }
 
-    /**
-     * Message entry in an Ollama chat request.
-     */
+    private record OllamaOptions(int num_predict, double temperature) {
+    }
+
     private record OllamaMessage(
             String role,
             String content
