@@ -39,13 +39,13 @@ public final class AppConfig {
     /**
      * Gets the Gemini model identifier.
      *
-     * @return configured model, or {@code gemini-2.5-flash}
+     * @return configured model, or {@code gemini-3.8-flash}
      */
     public static String getGeminiModel() {
 
         return getOrDefault(
                 "GEMINI_MODEL",
-                "gemini-2.5-flash"
+                "gemini-3.8-flash"
         );
     }
 

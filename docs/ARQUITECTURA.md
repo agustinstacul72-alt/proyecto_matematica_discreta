@@ -62,7 +62,7 @@ reglas clínicas o educativas.
 | --- | --- |
 | `service/AiProvider.java` | Contrato común: generar una respuesta de texto y exponer el nombre del proveedor. |
 | `service/AiService.java` | Fachada del proveedor seleccionado; permite enviar un prompt, consultar el nombre y reemplazar el proveedor. |
-| `service/GeminiProvider.java` | Transmite respuestas del modelo Gemini con la biblioteca `google-genai`. Requiere `GEMINI_API_KEY`. |
+| `service/GeminiProvider.java` | Transmite respuestas de Gemini 3.8 Flash con la Interactions API de `google-genai`. Requiere `GEMINI_API_KEY`. |
 | `service/OllamaProvider.java` | Transmite respuestas NDJSON desde `{OLLAMA_URL}/api/chat`. |
 
 El dashboard crea un `AiService` con Ollama por defecto. El selector del chat
@@ -70,8 +70,8 @@ permite cambiar entre Ollama y Gemini. Las solicitudes se ejecutan en un hilo
 de `CompletableFuture`, evitando bloquear el hilo de interfaz. Ambos proveedores
 transmiten fragmentos a medida que se generan. Ollama limita la salida a 512
 tokens y conserva el modelo cargado durante diez minutos. Gemini usa
-`gemini-2.5-flash`, limita la salida y desactiva el razonamiento ampliado para
-reducir la demora en respuestas conversacionales.
+`gemini-3.8-flash` por la Interactions API, con razonamiento mínimo y salida
+limitada para reducir la demora en respuestas conversacionales.
 
 La gestión de errores del chat muestra el error en la conversación. La selección
 Gemini requiere una clave API válida y un nombre de modelo disponible. La

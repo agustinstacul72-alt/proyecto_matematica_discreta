@@ -1,12 +1,18 @@
 package com.medset.medsetai.service;
 
 import com.google.genai.Client;
-import com.google.genai.ResponseStream;
-import com.google.genai.types.GenerateContentConfig;
-import com.google.genai.types.GenerateContentResponse;
-import com.google.genai.types.ThinkingConfig;
+import com.google.genai.gaos.models.interactions.CreateModelInteraction;
+import com.google.genai.gaos.models.interactions.GenerationConfig;
+import com.google.genai.gaos.models.interactions.InteractionSSEStreamEvent;
+import com.google.genai.gaos.models.interactions.InteractionsInput;
+import com.google.genai.gaos.models.interactions.StepDelta;
+import com.google.genai.gaos.models.interactions.TextDelta;
+import com.google.genai.gaos.models.interactions.ThinkingLevel;
+import com.google.genai.gaos.models.operations.CreateInteractionRequestBody;
+import com.google.genai.gaos.utils.EventStream;
 import com.medset.medsetai.util.AppConfig;
 
+import java.io.IOException;
 import java.util.Objects;
 import java.util.function.Consumer;
 
@@ -58,28 +64,48 @@ public class GeminiProvider implements AiProvider {
         Objects.requireNonNull(prompt, "prompt");
         Objects.requireNonNull(onText, "onText");
 
-        GenerateContentConfig config = GenerateContentConfig.builder()
-                .temperature(0.4f)
-                .maxOutputTokens(512)
-                .thinkingConfig(ThinkingConfig.builder()
-                        .thinkingBudget(0)
+        CreateModelInteraction interaction = CreateModelInteraction.builder()
+                .model(model)
+                .input(InteractionsInput.of(prompt))
+                .stream(true)
+                .store(false)
+                .generationConfig(GenerationConfig.builder()
+                        .maxOutputTokens(512)
+                        .thinkingLevel(ThinkingLevel.MINIMAL)
                         .build())
                 .build();
 
         StringBuilder responseText = new StringBuilder();
-        try (ResponseStream<GenerateContentResponse> responses =
-                     client.models.generateContentStream(model, prompt, config)) {
-            for (GenerateContentResponse response : responses) {
-                String fragment = response.text();
-                if (fragment != null && !fragment.isEmpty()) {
-                    responseText.append(fragment);
-                    onText.accept(fragment);
+        try {
+            var response = client.interactions.create(
+                    CreateInteractionRequestBody.of(interaction)
+            );
+            try (EventStream<InteractionSSEStreamEvent> events = response.events()) {
+                for (InteractionSSEStreamEvent event : events) {
+                    event.data().ifPresent(data -> {
+                        if (data instanceof StepDelta stepDelta) {
+                            stepDelta.delta()
+                                    .filter(TextDelta.class::isInstance)
+                                    .map(TextDelta.class::cast)
+                                    .flatMap(TextDelta::text)
+                                    .filter(fragment -> !fragment.isEmpty())
+                                    .ifPresent(fragment -> {
+                                        responseText.append(fragment);
+                                        onText.accept(fragment);
+                                    });
+                        }
+                    });
                 }
             }
+        } catch (IOException e) {
+            throw new IllegalStateException(
+                    "Se interrumpió la transmisión de Gemini: " + e.getMessage(),
+                    e
+            );
         } catch (RuntimeException e) {
             throw new IllegalStateException(
-                    "Gemini no pudo generar una respuesta. Verifica GEMINI_API_KEY, "
-                            + "GEMINI_MODEL y que la API de Gemini esté habilitada: "
+                    "Gemini no pudo generar una respuesta con Interactions API. "
+                            + "Verifica GEMINI_API_KEY, GEMINI_MODEL y el acceso a la API: "
                             + e.getMessage(),
                     e
             );
