@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<StackPane xmlns="http://javafx.com/javafx/21"
+           xmlns:fx="http://javafx.com/fxml/1"
+           fx:controller="com.medset.medsetai.controller.CreditsController"
+           stylesheets="@../css/app.css"
+           styleClass="credits-root">
+
+    <VBox alignment="CENTER"
+          spacing="10"
+          maxWidth="720"
+          styleClass="credits-container">
+
+        <!-- Logo -->
+        <ImageView fitWidth="110"
+                   fitHeight="110"
+                   preserveRatio="true"
+                   styleClass="credits-logo">
+            <image>
+                <Image url="@../images/medset-logo.png"/>
+            </image>
+        </ImageView>
+
+        <!-- Project title -->
+        <Label text="MedSet AI"
+               styleClass="credits-title"/>
+
+        <Label text="Discrete Mathematics"
+               styleClass="credits-course"/>
+
+        <HBox alignment="CENTER"
+              spacing="8"
+              styleClass="credits-group">
+
+            <Label text="Group"
+                   styleClass="credits-label"/>
+
+            <Label text="6"
+                   styleClass="credits-group-number"/>
+
+        </HBox>
+
+        <!-- Professor -->
+        <VBox alignment="CENTER"
+              spacing="3"
+              styleClass="credits-section">
+
+            <Label text="PROFESSOR"
+                   styleClass="credits-heading"/>
+
+            <Label text="Rafael Pastor Martínez Vargas"
+                   styleClass="credits-professor"/>
+
+        </VBox>
+
+        <!-- Students -->
+        <VBox alignment="CENTER"
+              spacing="5"
+              styleClass="credits-section">
+
+            <Label text="STUDENTS"
+                   styleClass="credits-heading"/>
+
+            <Label text="Daniel Tueros Cueva"
+                   styleClass="credits-student"/>
+
+            <Label text="Brisa Abigail Alvarez"
+                   styleClass="credits-student"/>
+
+            <Label text="Stacul Dario Agustin"
+                   styleClass="credits-student"/>
+
+            <Label text="Dayana Lucia Posada Narváez"
+                   styleClass="credits-student"/>
+
+            <Label text="Agustin Tomas Gammuto"
+                   styleClass="credits-student"/>
+
+            <Label text="Jose David Carranza Angarita"
+                   styleClass="credits-student"/>
+
+        </VBox>
+
+        <!-- Project description -->
+        <Label text="An educational project that applies set theory and artificial intelligence to a simulated symptom analysis system."
+               wrapText="true"
+               maxWidth="600"
+               styleClass="credits-description"/>
+
+        <!-- Disclaimer -->
+        <Label text="Educational simulator • Not a medical diagnostic tool"
+               styleClass="credits-disclaimer"/>
+
+        <!-- Close -->
+        <Button text="Close"
+                onAction="#handleClose"
+                styleClass="secondary-button"/>
+
+    </VBox>
+
+</StackPane>

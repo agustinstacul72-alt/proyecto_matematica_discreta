@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Priority?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.medset.medsetai.controller.DashboardController"
+            stylesheets="@../css/app.css"
+            prefHeight="750.0"
+            prefWidth="1200.0">
+
+    <!-- TOP BAR -->
+    <top>
+        <HBox alignment="CENTER_LEFT"
+              spacing="15"
+              styleClass="dashboard-top-bar">
+
+            <Button text="← Main"
+                    onAction="#handleBackToWelcome"
+                    styleClass="secondary-button"/>
+
+            <Label text="MedSet AI"
+                   styleClass="dashboard-app-title"/>
+
+            <Region HBox.hgrow="ALWAYS"/>
+
+            <Label text="Educational Simulator"
+                   styleClass="dashboard-status-label"/>
+
+        </HBox>
+    </top>
+
+
+    <!-- SIDEBAR -->
+    <left>
+        <VBox spacing="10"
+              prefWidth="230"
+              styleClass="dashboard-sidebar">
+
+            <Label text="DASHBOARD"
+                   styleClass="sidebar-title"/>
+
+            <Button text="🤖  AI Assistant"
+                    onAction="#showAssistant"
+                    maxWidth="Infinity"
+                    styleClass="sidebar-button"/>
+
+            <Button text="👤  Patient"
+                    onAction="#showPatient"
+                    maxWidth="Infinity"
+                    styleClass="sidebar-button"/>
+
+        </VBox>
+    </left>
+
+
+    <!-- MAIN CONTENT -->
+    <center>
+        <StackPane>
+
+            <!-- ========================= -->
+            <!-- AI ASSISTANT PANEL -->
+            <!-- ========================= -->
+
+            <VBox fx:id="assistantPanel"
+                  spacing="18"
+                  styleClass="dashboard-content">
+
+                <VBox spacing="5">
+
+                    <Label text="AI Assistant"
+                           styleClass="panel-title"/>
+
+                    <Label text="Ask questions about set theory, mathematics, or the MedSet AI project."
+                           styleClass="panel-description"/>
+
+                </VBox>
+
+
+                <!-- CHAT -->
+                <ScrollPane fx:id="chatScrollPane"
+                            fitToWidth="true"
+                            VBox.vgrow="ALWAYS"
+                            styleClass="chat-scroll">
+
+                    <VBox fx:id="chatContainer"
+                          spacing="12"
+                          styleClass="chat-container">
+
+                        <VBox spacing="4"
+                              styleClass="ai-message">
+
+                            <Label text="MedSet AI"
+                                   styleClass="message-sender"/>
+
+                            <Label text="Hola, ¿en qué puedo ayudarte?"
+                                   wrapText="true"
+                                   styleClass="message-text"/>
+
+                        </VBox>
+
+                    </VBox>
+
+                </ScrollPane>
+
+
+                <!-- PROVIDER -->
+                <HBox alignment="CENTER_LEFT"
+                      spacing="10">
+
+                    <Label text="AI Provider:"
+                           styleClass="field-label"/>
+
+                    <ComboBox fx:id="assistantProviderComboBox"
+                              prefWidth="180"
+                              styleClass="provider-combo"/>
+
+                </HBox>
+
+
+                <!-- INPUT -->
+                <HBox spacing="10"
+                      alignment="CENTER_LEFT">
+
+                    <TextField fx:id="messageField"
+                               promptText="Escribe tu mensaje..."
+                               onAction="#handleSendMessage"
+                               HBox.hgrow="ALWAYS"
+                               styleClass="message-input"/>
+
+                    <Button text="➤"
+                            onAction="#handleSendMessage"
+                            styleClass="send-button"/>
+
+                </HBox>
+
+            </VBox>
+
+
+            <!-- ========================= -->
+            <!-- PATIENT PANEL -->
+            <!-- ========================= -->
+
+            <VBox fx:id="patientPanel"
+                  spacing="20"
+                  visible="false"
+                  managed="false"
+                  styleClass="dashboard-content">
+
+                <VBox spacing="5">
+
+                    <Label text="Patient"
+                           styleClass="panel-title"/>
+
+                    <Label text="Enter simulated patient information for educational set analysis."
+                           styleClass="panel-description"/>
+
+                </VBox>
+
+
+                <!-- PATIENT DATA -->
+
+                <VBox spacing="12"
+                      styleClass="patient-form">
+
+                    <Label text="Patient Information"
+                           styleClass="section-title"/>
+
+                    <HBox spacing="15">
+
+                        <VBox spacing="6"
+                              HBox.hgrow="ALWAYS">
+
+                            <Label text="Name"
+                                   styleClass="field-label"/>
+
+                            <TextField fx:id="patientNameField"
+                                       promptText="Patient name"
+                                       styleClass="form-input"/>
+
+                        </VBox>
+
+                        <VBox spacing="6"
+                              prefWidth="150">
+
+                            <Label text="Age"
+                                   styleClass="field-label"/>
+
+                            <TextField fx:id="patientAgeField"
+                                       promptText="Age"
+                                       styleClass="form-input"/>
+
+                        </VBox>
+
+                    </HBox>
+
+
+                    <Label text="Symptoms"
+                           styleClass="field-label"/>
+
+                    <TextArea fx:id="symptomsArea"
+                              promptText="Enter the simulated symptoms here..."
+                              wrapText="true"
+                              VBox.vgrow="ALWAYS"
+                              styleClass="symptoms-area"/>
+
+                </VBox>
+
+
+                <!-- AI MODEL -->
+
+                <HBox alignment="CENTER_LEFT"
+                      spacing="10">
+
+                    <Label text="AI Model:"
+                           styleClass="field-label"/>
+
+                    <ComboBox fx:id="patientProviderComboBox"
+                              prefWidth="180"
+                              styleClass="provider-combo"/>
+
+                </HBox>
+
+
+                <!-- ACTIONS -->
+
+                <HBox alignment="CENTER_RIGHT"
+                      spacing="12">
+
+                    <Button text="Mostrar Informe"
+                            onAction="#handleShowReport"
+                            styleClass="primary-button"/>
+
+                    <Button text="Graficar"
+                            onAction="#handleGraph"
+                            styleClass="secondary-button"/>
+
+                </HBox>
+
+            </VBox>
+
+        </StackPane>
+    </center>
+
+</BorderPane>

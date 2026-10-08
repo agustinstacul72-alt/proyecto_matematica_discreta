@@ -1,0 +1,350 @@
+.root {
+    -fx-font-family: "Segoe UI";
+}
+
+.welcome-root {
+    -fx-background-color: #F8FAFC;
+}
+
+.welcome-container {
+    -fx-padding: 50;
+}
+
+.welcome-title {
+    -fx-font-size: 52px;
+    -fx-font-weight: 700;
+    -fx-text-fill: #0F172A;
+}
+
+.welcome-subtitle {
+    -fx-font-size: 18px;
+    -fx-text-fill: #64748B;
+    -fx-text-alignment: center;
+}
+
+.welcome-tagline {
+    -fx-font-size: 16px;
+    -fx-font-weight: 600;
+    -fx-text-fill: #2563EB;
+}
+
+.primary-button {
+    -fx-background-color: #2563EB;
+    -fx-text-fill: white;
+    -fx-font-size: 16px;
+    -fx-font-weight: 600;
+    -fx-padding: 13 28;
+    -fx-background-radius: 10;
+    -fx-cursor: hand;
+}
+
+.primary-button:hover {
+    -fx-background-color: #1D4ED8;
+}
+
+.secondary-button {
+    -fx-background-color: white;
+    -fx-text-fill: #0F172A;
+    -fx-font-size: 16px;
+    -fx-font-weight: 600;
+    -fx-padding: 13 28;
+    -fx-border-color: #CBD5E1;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+    -fx-cursor: hand;
+}
+
+.secondary-button:hover {
+    -fx-background-color: #F1F5F9;
+}
+
+.welcome-disclaimer {
+    -fx-font-size: 12px;
+    -fx-text-fill: #94A3B8;
+}
+
+
+
+
+/* =========================
+   CREDITS
+   ========================= */
+
+.credits-root {
+    -fx-background-color: #F8FAFC;
+}
+
+.credits-container {
+    -fx-padding: 35 50 40 50;
+}
+
+.credits-logo {
+    -fx-translate-y: -5px;
+}
+
+.credits-title {
+    -fx-font-size: 40px;
+    -fx-font-weight: 700;
+    -fx-text-fill: #0F172A;
+}
+
+.credits-course {
+    -fx-font-size: 19px;
+    -fx-font-weight: 600;
+    -fx-text-fill: #2563EB;
+}
+
+.credits-group {
+    -fx-padding: 2 0 8 0;
+}
+
+.credits-label {
+    -fx-font-size: 13px;
+    -fx-text-fill: #64748B;
+}
+
+.credits-group-number {
+    -fx-font-size: 14px;
+    -fx-font-weight: 700;
+    -fx-text-fill: #2563EB;
+}
+
+.credits-section {
+    -fx-padding: 8 0 5 0;
+}
+
+.credits-heading {
+    -fx-font-size: 11px;
+    -fx-font-weight: 700;
+    -fx-text-fill: #64748B;
+    -fx-letter-spacing: 1px;
+}
+
+.credits-professor {
+    -fx-font-size: 17px;
+    -fx-font-weight: 600;
+    -fx-text-fill: #0F172A;
+}
+
+.credits-student {
+    -fx-font-size: 14px;
+    -fx-text-fill: #334155;
+}
+
+.credits-description {
+    -fx-font-size: 13px;
+    -fx-text-fill: #64748B;
+    -fx-text-alignment: center;
+    -fx-padding: 10 0 2 0;
+}
+
+.credits-disclaimer {
+    -fx-font-size: 11px;
+    -fx-text-fill: #94A3B8;
+    -fx-padding: 2 0 8 0;
+}
+
+/*Dashboard*/
+.dashboard-top-bar {
+    -fx-background-color: white;
+    -fx-padding: 15 25;
+    -fx-border-color: #E2E8F0;
+    -fx-border-width: 0 0 1 0;
+}
+
+.dashboard-app-title {
+    -fx-font-size: 20px;
+    -fx-font-weight: 700;
+    -fx-text-fill: #0F172A;
+}
+
+/* =========================
+   DASHBOARD
+   ========================= */
+
+.dashboard-top-bar {
+    -fx-background-color: white;
+    -fx-padding: 15 25;
+    -fx-border-color: #E2E8F0;
+    -fx-border-width: 0 0 1 0;
+}
+
+.dashboard-app-title {
+    -fx-font-size: 20px;
+    -fx-font-weight: 700;
+    -fx-text-fill: #0F172A;
+}
+
+.dashboard-status-label {
+    -fx-font-size: 12px;
+    -fx-text-fill: #94A3B8;
+}
+
+
+/* SIDEBAR */
+
+.dashboard-sidebar {
+    -fx-background-color: white;
+    -fx-padding: 25 15;
+    -fx-border-color: #E2E8F0;
+    -fx-border-width: 0 1 0 0;
+}
+
+.sidebar-title {
+    -fx-font-size: 11px;
+    -fx-font-weight: 700;
+    -fx-text-fill: #64748B;
+    -fx-padding: 0 10 10 10;
+}
+
+.sidebar-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: #334155;
+    -fx-font-size: 14px;
+    -fx-font-weight: 600;
+    -fx-alignment: CENTER_LEFT;
+    -fx-padding: 12 15;
+    -fx-background-radius: 8;
+    -fx-cursor: hand;
+}
+
+.sidebar-button:hover {
+    -fx-background-color: #F1F5F9;
+}
+
+
+/* CONTENT */
+
+.dashboard-content {
+    -fx-background-color: #F8FAFC;
+    -fx-padding: 35;
+}
+
+.panel-title {
+    -fx-font-size: 30px;
+    -fx-font-weight: 700;
+    -fx-text-fill: #0F172A;
+}
+
+.panel-description {
+    -fx-font-size: 14px;
+    -fx-text-fill: #64748B;
+}
+
+
+/* CHAT */
+
+.chat-scroll {
+    -fx-background-color: transparent;
+    -fx-background: transparent;
+    -fx-border-color: #E2E8F0;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+}
+
+.chat-scroll .viewport {
+    -fx-background-color: white;
+}
+
+.chat-container {
+    -fx-background-color: white;
+    -fx-padding: 20;
+}
+
+
+/* MESSAGES */
+
+.ai-message {
+    -fx-background-color: #EFF6FF;
+    -fx-padding: 12;
+    -fx-background-radius: 10;
+}
+
+.user-message {
+    -fx-background-color: #F1F5F9;
+    -fx-padding: 12;
+    -fx-background-radius: 10;
+}
+
+.message-sender {
+    -fx-font-size: 11px;
+    -fx-font-weight: 700;
+    -fx-text-fill: #64748B;
+}
+
+.message-text {
+    -fx-font-size: 14px;
+    -fx-text-fill: #0F172A;
+}
+
+
+/* INPUT */
+
+.field-label {
+    -fx-font-size: 13px;
+    -fx-font-weight: 600;
+    -fx-text-fill: #334155;
+}
+
+.provider-combo {
+    -fx-background-color: white;
+    -fx-border-color: #CBD5E1;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+}
+
+.message-input {
+    -fx-background-color: white;
+    -fx-border-color: #CBD5E1;
+    -fx-border-radius: 9;
+    -fx-background-radius: 9;
+    -fx-padding: 12;
+    -fx-font-size: 14px;
+}
+
+.send-button {
+    -fx-background-color: #2563EB;
+    -fx-text-fill: white;
+    -fx-font-size: 18px;
+    -fx-font-weight: 700;
+    -fx-padding: 10 17;
+    -fx-background-radius: 9;
+    -fx-cursor: hand;
+}
+
+.send-button:hover {
+    -fx-background-color: #1D4ED8;
+}
+
+
+/* PATIENT */
+
+.patient-form {
+    -fx-background-color: white;
+    -fx-padding: 22;
+    -fx-background-radius: 10;
+    -fx-border-color: #E2E8F0;
+    -fx-border-radius: 10;
+}
+
+.section-title {
+    -fx-font-size: 17px;
+    -fx-font-weight: 700;
+    -fx-text-fill: #0F172A;
+}
+
+.form-input {
+    -fx-background-color: #F8FAFC;
+    -fx-border-color: #CBD5E1;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-padding: 11;
+}
+
+.symptoms-area {
+    -fx-background-color: #F8FAFC;
+    -fx-border-color: #CBD5E1;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-font-size: 14px;
+}
