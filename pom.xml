@@ -7,7 +7,7 @@
 
     <groupId>com.medset</groupId>
     <artifactId>medset-ai</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
     <name>MedSet AI</name>
 
     <properties>

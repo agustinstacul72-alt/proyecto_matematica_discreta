@@ -70,7 +70,7 @@ jobs:
       - name: Add application jar to installer input
         shell: bash
         run: |
-          cp target/medset-ai-1.0.0.jar target/package-input/medset-ai.jar
+          cp target/medset-ai-1.0.1.jar target/package-input/medset-ai.jar
 
       - name: Create and smoke-test native application image
         shell: bash
@@ -121,17 +121,38 @@ jobs:
         run: |
           $msi = Get-ChildItem target\installers\*.msi | Select-Object -First 1
           if (-not $msi) { throw "MSI installer was not generated." }
-          $install = Start-Process msiexec.exe -ArgumentList @("/i", $msi.FullName, "/qn", "/norestart") -Wait -PassThru
+          $installLog = Join-Path $env:RUNNER_TEMP "MedSetAI-msi-install.log"
+          $install = Start-Process msiexec.exe -ArgumentList @("/i", $msi.FullName, "/qn", "/norestart", "/l*v", $installLog) -Wait -PassThru
           if ($install.ExitCode -notin @(0, 3010)) { throw "MSI installation failed with exit code $($install.ExitCode)." }
-          $app = Get-ChildItem "$env:LOCALAPPDATA\Programs" -Filter MedSetAI.exe -Recurse | Select-Object -First 1
-          if (-not $app) { throw "Installed application executable was not found." }
+          $uninstallRoots = @(
+            "HKCU:\Software\Microsoft\Windows\CurrentVersion\Uninstall\*",
+            "HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\*",
+            "HKLM:\Software\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall\*"
+          )
+          $installLocations = Get-ItemProperty $uninstallRoots -ErrorAction SilentlyContinue |
+            Where-Object { $_.DisplayName -like "*MedSet*" } |
+            ForEach-Object { $_.InstallLocation } |
+            Where-Object { $_ -and (Test-Path $_) }
+          $searchRoots = @(
+            $installLocations
+            "$env:LOCALAPPDATA\Programs"
+            $env:LOCALAPPDATA
+            (Join-Path $env:ProgramFiles "MedSetAI")
+            (Join-Path ([Environment]::GetEnvironmentVariable("ProgramFiles(x86)")) "MedSetAI")
+          ) | Where-Object { $_ -and (Test-Path $_) } | Select-Object -Unique
+          $app = Get-ChildItem -Path $searchRoots -Filter MedSetAI.exe -File -Recurse -ErrorAction SilentlyContinue |
+            Select-Object -First 1
+          if (-not $app) {
+            Get-Content $installLog -Tail 40
+            throw "Installed application executable was not found. MSI log: $installLog"
+          }
           $smoke = Start-Process $app.FullName -ArgumentList "--smoke-test" -Wait -PassThru
           if ($smoke.ExitCode -ne 0) { throw "Installed application smoke test failed with exit code $($smoke.ExitCode)." }
 
       - name: Install and smoke-test Linux package
         if: runner.os == 'Linux'
         run: |
-          sudo apt-get install --yes target/installers/*.deb
+          sudo apt-get install --yes ./target/installers/*.deb
           xvfb-run --auto-servernum /opt/MedSetAI/bin/MedSetAI --smoke-test
 
       - name: Install and smoke-test macOS package

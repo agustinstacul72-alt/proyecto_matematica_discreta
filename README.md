@@ -51,7 +51,7 @@ Maven, recursos, documentación y una plantilla segura de configuración local.
 
 | Componente | Versión para esta release | ¿Se incluye en el instalador? |
 | --- | --- | --- |
-| MedSet AI | `1.0.0` | Sí |
+| MedSet AI | `1.0.1` | Sí |
 | Java | 25 | Sí, como runtime privado de la aplicación |
 | JavaFX | 21.0.6 | Sí, junto con la aplicación |
 | Ollama | `0.40.1` fue la versión probada durante el desarrollo | No |
@@ -123,7 +123,7 @@ aplicación o en el entorno del sistema.
 
 ## Crear instaladores de una release
 
-Al crear y subir un tag de versión (`v1.0.0`, por ejemplo), GitHub Actions
+Al crear y subir un tag de versión (`v1.0.1`, por ejemplo), GitHub Actions
 ejecuta las pruebas, genera un instalador nativo y comprueba que la aplicación
 instalada arranque en Windows, Linux y macOS. Si todos los trabajos terminan
 correctamente, el workflow crea una GitHub Release con los instaladores `.msi`,
@@ -135,8 +135,8 @@ Para publicar una nueva versión desde la terminal:
 ```bash
 git switch main
 git pull
-git tag v1.0.0
-git push origin v1.0.0
+git tag v1.0.1
+git push origin v1.0.1
 ```
 
 Los instaladores incluyen Java 25 y JavaFX 21.0.6; no requieren que el usuario
