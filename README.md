@@ -1,8 +1,24 @@
-# MedSet AI
+<div align="center">
+  <img src="src/main/resources/com/medset/medsetai/images/medset-logo.png" alt="Logotipo de MedSet AI" width="140">
+
+  <h1>MedSet AI</h1>
+  <p><strong>Matemática discreta · Grupo 6</strong></p>
+  <p>Una aplicación educativa para explorar teoría de conjuntos e inteligencia artificial mediante el análisis simulado de síntomas.</p>
+
+  <p>
+    <img src="https://img.shields.io/badge/Java-25-ED8B00?logo=openjdk&logoColor=white" alt="Java 25">
+    <img src="https://img.shields.io/badge/JavaFX-21-1B6AC6" alt="JavaFX 21">
+    <img src="https://img.shields.io/badge/License-MIT-2563EB" alt="Licencia MIT">
+  </p>
+
+  <p><strong>Proyecto educativo · No es una herramienta médica ni ofrece diagnósticos.</strong></p>
+</div>
+
+---
 
 Aplicación de escritorio educativa desarrollada con JavaFX para explorar el
 análisis simulado de síntomas mediante teoría de conjuntos e inteligencia
-artificial. **No es una herramienta médica ni ofrece diagnósticos.**
+artificial.
 
 El repositorio original contenía únicamente un `Main.java` vacío y un README
 inicial. Esta rama incorpora la aplicación JavaFX existente, su configuración
@@ -113,3 +129,8 @@ request.
 El código fuente y la documentación se distribuyen bajo la licencia MIT;
 consulta [`LICENSE`](LICENSE). Los logotipos e imágenes del proyecto quedan
 excluidos y mantienen los derechos de sus respectivos propietarios.
+
+<div align="center">
+  <sub>Proyecto académico de Matemática Discreta · Grupo 6</sub><br>
+  <img src="src/main/resources/com/medset/medsetai/images/jala-logo.png" alt="Jala University" width="180">
+</div>
