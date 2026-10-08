@@ -16,40 +16,6 @@ public final class AppConfig {
     }
 
     /**
-     * Gets the required Gemini API key.
-     *
-     * @return configured Gemini API key
-     * @throws IllegalStateException if {@code GEMINI_API_KEY} is absent or blank
-     */
-    public static String getGeminiApiKey() {
-
-        String value = DOTENV.get("GEMINI_API_KEY");
-
-        if (value == null
-                || value.isBlank()
-                || "your_gemini_api_key_here".equalsIgnoreCase(value.trim())) {
-            throw new IllegalStateException(
-                    "Configura una clave válida en GEMINI_API_KEY dentro de .env"
-            );
-        }
-
-        return value;
-    }
-
-    /**
-     * Gets the Gemini model identifier.
-     *
-     * @return configured model, or {@code gemini-3.8-flash}
-     */
-    public static String getGeminiModel() {
-
-        return getOrDefault(
-                "GEMINI_MODEL",
-                "gemini-3.8-flash"
-        );
-    }
-
-    /**
      * Gets the Ollama server base URL.
      *
      * @return configured URL, or {@code http://localhost:11434}
@@ -72,6 +38,19 @@ public final class AppConfig {
         return getOrDefault(
                 "OLLAMA_MODEL",
                 "gemma3:4b"
+        );
+    }
+
+    /**
+     * Gets the second Ollama model used by the model selector.
+     *
+     * @return configured model, or {@code nemotron-3-nano:4b}
+     */
+    public static String getOllamaNemotronModel() {
+
+        return getOrDefault(
+                "OLLAMA_NEMOTRON_MODEL",
+                "nemotron-3-nano:4b"
         );
     }
 

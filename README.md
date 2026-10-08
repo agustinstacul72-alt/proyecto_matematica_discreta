@@ -38,10 +38,10 @@ Maven, recursos, documentación y una plantilla segura de configuración local.
 ## Estado actual
 
 - Pantalla de bienvenida y pantalla informativa del proyecto.
-- Dashboard con chat conectado a los proveedores de IA y un formulario de
+- Dashboard con chat conectado a los modelos de Ollama y un formulario de
   paciente en desarrollo.
-- Abstracción de proveedores de IA, con implementaciones para Gemini y Ollama.
-- Configuración local de proveedores mediante archivo `.env`.
+- Dos modelos locales de Ollama: Gemma 3 4B y Nemotron 3 Nano 4B.
+- Configuración de los modelos locales mediante archivo `.env`.
 - Los modelos `Patient`, `Symptom`, `Pattern` y `AnalysisResult` son
   actualmente marcadores vacíos.
 - La generación de informes de paciente y gráficos aún son acciones
@@ -52,9 +52,7 @@ Maven, recursos, documentación y una plantilla segura de configuración local.
 - JDK 25.
 - Maven Wrapper incluido en el repositorio (no hace falta instalar Maven).
 - Conexión a internet para descargar dependencias la primera vez.
-- Para usar Gemini: una clave de API.
-- Para usar Ollama: un servidor Ollama local o accesible y el modelo configurado
-  descargado en ese servidor.
+- Ollama instalado, con los modelos que quieras usar descargados localmente.
 
 ## Ejecutar
 
@@ -74,30 +72,32 @@ La aplicación se inicia desde
 `com.medset.medsetai.MedSetApplication`. `Main.java` se conserva como un
 lanzador de compatibilidad para quienes ejecuten la clase `Main` desde un IDE.
 
-## Configuración de IA
+## Configuración de Ollama
 
 1. Copia `.env.example` a `.env` en la raíz del proyecto.
-2. Si usarás Gemini, reemplaza `GEMINI_API_KEY` con tu clave. No la compartas ni
-   la subas al repositorio.
-3. Ajusta opcionalmente los nombres de modelo y la URL de Ollama.
+2. Descarga los modelos en Ollama:
+
+   ```powershell
+   ollama run gemma3:4b
+   ollama run nemotron-3-nano:4b
+   ```
+
+3. Ajusta opcionalmente la dirección y los nombres de los modelos en `.env`.
 
 | Variable | Uso | Valor predeterminado |
 | --- | --- | --- |
-| `GEMINI_API_KEY` | Clave de Gemini; requerida al crear `GeminiProvider` | Sin valor |
-| `GEMINI_MODEL` | Identificador del modelo Gemini | `gemini-3.8-flash` |
 | `OLLAMA_URL` | Dirección base del servidor Ollama | `http://localhost:11434` |
-| `OLLAMA_MODEL` | Modelo disponible en Ollama | `gemma3:4b` |
+| `OLLAMA_MODEL` | Primer modelo local | `gemma3:4b` |
+| `OLLAMA_NEMOTRON_MODEL` | Segundo modelo local | `nemotron-3-nano:4b` |
 
-La configuración actual se lee del archivo `.env`; no agregues credenciales a
-los archivos Java, FXML, README o commits.
+Ambas opciones se ejecutan a través del servidor Ollama local; no requieren una
+clave de API ni activar facturación de una API en la nube. Cada modelo debe
+descargarse antes de seleccionarlo. La primera consulta puede tardar más si
+Ollama todavía lo está cargando.
 
-Ambos proveedores transmiten las respuestas mientras se generan para que el
-texto empiece a aparecer antes de que termine la respuesta completa. Gemini
-usa el modelo Flash con Interactions API, razonamiento mínimo y longitud de
-salida limitada para reducir la espera. Ollama conserva el modelo cargado
-durante diez minutos;
-la primera consulta puede tardar más si el modelo aún no está descargado o
-cargado.
+Ambos modelos transmiten las respuestas mientras se generan para que el
+texto empiece a aparecer antes de que termine la respuesta completa. Ollama
+conserva cada modelo cargado durante diez minutos.
 
 ## Verificación
 
