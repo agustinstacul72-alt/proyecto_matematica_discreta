@@ -1,6 +1,7 @@
 package com.medset.medsetai;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
@@ -21,6 +22,16 @@ public class MedSetApplication extends Application {
     @Override
     public void start(Stage stage) throws IOException {
 
+        boolean smokeTest = getParameters().getRaw().contains("--smoke-test");
+        if (smokeTest) {
+            FXMLLoader.load(MedSetApplication.class.getResource(
+                    "/com/medset/medsetai/view/dashboard-view.fxml"
+            ));
+            FXMLLoader.load(MedSetApplication.class.getResource(
+                    "/com/medset/medsetai/view/credits-view.fxml"
+            ));
+        }
+
         FXMLLoader loader = new FXMLLoader(
                 MedSetApplication.class.getResource(
                         "/com/medset/medsetai/view/welcome-view.fxml"
@@ -34,5 +45,9 @@ public class MedSetApplication extends Application {
         stage.setMinWidth(1000);
         stage.setMinHeight(650);
         stage.show();
+
+        if (smokeTest) {
+            Platform.runLater(stage::close);
+        }
     }
 }

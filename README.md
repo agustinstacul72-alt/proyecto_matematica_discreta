@@ -68,6 +68,33 @@ En macOS o Linux:
 bash ./mvnw javafx:run
 ```
 
+## Crear instaladores de una release
+
+Al crear y subir un tag de versión (`v1.0.0`, por ejemplo), GitHub Actions
+ejecuta las pruebas, genera un instalador nativo y comprueba que la aplicación
+instalada arranque en Windows, Linux y macOS. Si todos los trabajos terminan
+correctamente, el workflow crea una GitHub Release con los instaladores `.msi`,
+`.deb` y `.pkg` adjuntos. También puedes iniciar el workflow manualmente para
+probar la creación e instalación sin publicar una release.
+
+Para publicar una nueva versión desde la terminal:
+
+```bash
+git switch main
+git pull
+git tag v1.0.0
+git push origin v1.0.0
+```
+
+Los instaladores incluyen un runtime de Java y no requieren que el usuario
+instale un JDK. **Ollama y el modelo local sí deben instalarse por separado**;
+el workflow comprueba el arranque de las pantallas, pero no instala Ollama ni
+descarga modelos durante la instalación.
+
+Antes de publicar, confirma que el workflow **Build release installers** acabó
+con éxito en los tres sistemas operativos. No reutilices un tag de versión ya
+publicado.
+
 La aplicación se inicia desde
 `com.medset.medsetai.MedSetApplication`. `Main.java` se conserva como un
 lanzador de compatibilidad para quienes ejecuten la clase `Main` desde un IDE.

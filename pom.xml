@@ -127,7 +127,7 @@
 
                         <configuration>
                             <mainClass>
-                                com.medset.medsetai/com.medset.medsetai.MedSetApplication
+                                com.medset.medsetai.Launcher
                             </mainClass>
 
                             <launcher>app</launcher>
