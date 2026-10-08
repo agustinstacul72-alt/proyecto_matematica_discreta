@@ -1,0 +1,30 @@
+# Build output
+target/
+build/
+dist/
+*.class
+
+# Local configuration and secrets
+.env
+.env.*
+!.env.example
+
+# IDE/editor files
+.idea/
+*.iml
+*.iws
+*.ipr
+.vscode/
+.classpath
+.project
+.settings/
+.factorypath
+.apt_generated/
+.sts4-cache/
+.springBeans
+
+# Other generated files
+.kotlin/
+.DS_Store
+Thumbs.db
+*.log
