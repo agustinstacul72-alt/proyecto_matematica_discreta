@@ -107,3 +107,9 @@ Trabaja en una rama separada, por ejemplo `dev-jose`, y abre un pull request
 dirigido a `main`. No subas directamente a `main`. Antes de solicitar revisión,
 ejecuta `mvnw test` y describe los cambios y las pruebas realizadas en el pull
 request.
+
+## Licencia
+
+El código fuente y la documentación se distribuyen bajo la licencia MIT;
+consulta [`LICENSE`](LICENSE). Los logotipos e imágenes del proyecto quedan
+excluidos y mantienen los derechos de sus respectivos propietarios.
