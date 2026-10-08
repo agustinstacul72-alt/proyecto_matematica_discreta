@@ -20,6 +20,17 @@ Aplicación de escritorio educativa desarrollada con JavaFX para explorar el
 análisis simulado de síntomas mediante teoría de conjuntos e inteligencia
 artificial.
 
+## Equipo
+
+Proyecto de Matemática Discreta · Grupo 6
+
+- Daniel Tueros Cueva
+- Brisa Abigail Alvarez
+- Stacul Dario Agustin
+- Dayana Lucia Posada Narváez
+- Agustin Tomas Gammuto
+- Jose David Carranza Angarita
+
 El repositorio original contenía únicamente un `Main.java` vacío y un README
 inicial. Esta rama incorpora la aplicación JavaFX existente, su configuración
 Maven, recursos, documentación y una plantilla segura de configuración local.
