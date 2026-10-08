@@ -70,7 +70,7 @@ jobs:
       - name: Add application jar to installer input
         shell: bash
         run: |
-          cp target/medset-ai-1.0-SNAPSHOT.jar target/package-input/medset-ai.jar
+          cp target/medset-ai-1.0.0.jar target/package-input/medset-ai.jar
 
       - name: Create and smoke-test native application image
         shell: bash

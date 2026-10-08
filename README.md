@@ -47,12 +47,31 @@ Maven, recursos, documentación y una plantilla segura de configuración local.
 - La generación de informes de paciente y gráficos aún son acciones
   provisionales; consulta [`docs/ARQUITECTURA.md`](docs/ARQUITECTURA.md).
 
-## Requisitos
+## Versiones y requisitos
 
-- JDK 25.
-- Maven Wrapper incluido en el repositorio (no hace falta instalar Maven).
-- Conexión a internet para descargar dependencias la primera vez.
-- Ollama instalado, con los modelos que quieras usar descargados localmente.
+| Componente | Versión para esta release | ¿Se incluye en el instalador? |
+| --- | --- | --- |
+| MedSet AI | `1.0.0` | Sí |
+| Java | 25 | Sí, como runtime privado de la aplicación |
+| JavaFX | 21.0.6 | Sí, junto con la aplicación |
+| Ollama | `0.40.1` fue la versión probada durante el desarrollo | No |
+| Gemma | `gemma3:4b` | No; se descarga en Ollama |
+| Nemotron | `nemotron-3-nano:4b` | No; se descarga en Ollama |
+
+Para **usar el chat de IA**, instala Ollama y descarga al menos uno de los dos
+modelos. La aplicación y sus instaladores no instalan Ollama ni descargan
+modelos automáticamente: son componentes separados y los modelos ocupan varios
+GB. La aplicación puede abrirse sin Ollama, pero el chat no podrá responder
+hasta que Ollama esté instalado, ejecutándose y tenga disponible el modelo
+seleccionado.
+
+El instalador nativo no requiere que instales Java ni Maven. JDK 25 y conexión
+a internet para descargar dependencias solo hacen falta si vas a compilar o
+ejecutar el proyecto desde el código fuente.
+
+Las versiones `gemma3:4b` y `nemotron-3-nano:4b` son etiquetas de modelo de
+Ollama; Ollama puede actualizar los archivos asociados a esas etiquetas al
+descargarlos. No se fija aquí un hash inmutable del modelo.
 
 ## Ejecutar
 
@@ -67,6 +86,40 @@ En macOS o Linux:
 ```bash
 bash ./mvnw javafx:run
 ```
+
+## Descargar e instalar la aplicación
+
+Cuando haya una release publicada, abre
+[Releases](https://github.com/agustinstacul72-alt/proyecto_matematica_discreta/releases/latest)
+y descarga el paquete de tu sistema: `.msi` para Windows, `.deb` para Ubuntu o
+`.pkg` para macOS. Los paquetes son nativos de su sistema y no se pueden
+intercambiar entre Windows, Linux y macOS. Sigue el asistente del sistema para
+instalar MedSet AI.
+
+### Preparar Ollama para el chat
+
+1. Instala Ollama desde la [página oficial de descarga](https://ollama.com/download)
+   y abre/inicia Ollama para que el servicio local quede activo. En Linux, sigue
+   las instrucciones oficiales de instalación para tu distribución.
+2. Abre una terminal y descarga al menos el modelo que vayas a usar:
+
+   ```text
+   ollama pull nemotron-3-nano:4b
+   ollama pull gemma3:4b
+   ```
+
+   El segundo comando es opcional si solo quieres utilizar Nemotron. Cada modelo
+   se descarga por separado y ocupa espacio en disco; la descarga necesita
+   conexión a internet, pero las consultas posteriores se ejecutan localmente.
+3. Comprueba la instalación con `ollama --version` y
+   `ollama list`. Después abre MedSet AI y selecciona un modelo que aparezca en
+   esa lista.
+
+Durante el desarrollo se comprobó el uso de Ollama `0.40.1` con
+`nemotron-3-nano:4b`. La aplicación se conecta al servidor local en
+`http://localhost:11434` por defecto. Si Ollama usa otra dirección, configura
+`OLLAMA_URL` en el archivo `.env` del directorio desde el que se inicia la
+aplicación o en el entorno del sistema.
 
 ## Crear instaladores de una release
 
@@ -86,10 +139,10 @@ git tag v1.0.0
 git push origin v1.0.0
 ```
 
-Los instaladores incluyen un runtime de Java y no requieren que el usuario
-instale un JDK. **Ollama y el modelo local sí deben instalarse por separado**;
-el workflow comprueba el arranque de las pantallas, pero no instala Ollama ni
-descarga modelos durante la instalación.
+Los instaladores incluyen Java 25 y JavaFX 21.0.6; no requieren que el usuario
+instale un JDK. **Ollama y al menos un modelo local deben instalarse por
+separado**. El workflow comprueba la instalación del paquete y el arranque de
+las vistas, pero no instala Ollama ni descarga modelos durante la instalación.
 
 Antes de publicar, confirma que el workflow **Build release installers** acabó
 con éxito en los tres sistemas operativos. No reutilices un tag de versión ya
@@ -99,14 +152,14 @@ La aplicación se inicia desde
 `com.medset.medsetai.MedSetApplication`. `Main.java` se conserva como un
 lanzador de compatibilidad para quienes ejecuten la clase `Main` desde un IDE.
 
-## Configuración de Ollama
+## Configuración de Ollama desde el código fuente
 
 1. Copia `.env.example` a `.env` en la raíz del proyecto.
-2. Descarga los modelos en Ollama:
+2. Instala e inicia Ollama y descarga uno o ambos modelos:
 
-   ```powershell
-   ollama run gemma3:4b
-   ollama run nemotron-3-nano:4b
+   ```text
+   ollama pull gemma3:4b
+   ollama pull nemotron-3-nano:4b
    ```
 
 3. Ajusta opcionalmente la dirección y los nombres de los modelos en `.env`.
