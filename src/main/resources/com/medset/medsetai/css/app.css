@@ -277,6 +277,72 @@
     -fx-text-fill: #0F172A;
 }
 
+.message-content {
+    -fx-fill-width: true;
+}
+
+.markdown-run {
+    -fx-font-size: 14px;
+    -fx-fill: #0F172A;
+}
+
+.markdown-bold {
+    -fx-font-weight: 700;
+}
+
+.markdown-italic {
+    -fx-font-style: italic;
+}
+
+.markdown-strikethrough {
+    -fx-strikethrough: true;
+}
+
+.markdown-heading-1 .markdown-run {
+    -fx-font-size: 24px;
+    -fx-font-weight: 700;
+}
+
+.markdown-heading-2 .markdown-run {
+    -fx-font-size: 21px;
+    -fx-font-weight: 700;
+}
+
+.markdown-heading-3 .markdown-run {
+    -fx-font-size: 18px;
+    -fx-font-weight: 700;
+}
+
+.markdown-heading-4 .markdown-run,
+.markdown-heading-5 .markdown-run,
+.markdown-heading-6 .markdown-run {
+    -fx-font-size: 16px;
+    -fx-font-weight: 700;
+}
+
+.markdown-list-marker {
+    -fx-fill: #2563EB;
+    -fx-font-size: 14px;
+    -fx-font-weight: 700;
+}
+
+.markdown-quote-mark {
+    -fx-fill: #94A3B8;
+    -fx-font-size: 18px;
+    -fx-font-weight: 700;
+}
+
+.markdown-code-block {
+    -fx-background-color: #E2E8F0;
+    -fx-background-radius: 6;
+    -fx-padding: 9;
+}
+
+.markdown-code {
+    -fx-font-family: "Consolas", "Monospaced";
+    -fx-fill: #334155;
+}
+
 
 /* INPUT */
 

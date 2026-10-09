@@ -1,9 +1,11 @@
 package com.medset.medsetai.model;
 
 /**
- * Placeholder for a future set-theory pattern in the educational analysis.
+ * Represents an educational pattern identified during set-theory analysis.
  *
- * <p>No pattern representation or operations are implemented yet.</p>
+ * <p>This model is reserved for the analysis module. It can later describe
+ * relationships among normalized symptoms from different simulated patients.
+ * It does not represent a medical diagnosis.</p>
  */
 public class Pattern {
 }

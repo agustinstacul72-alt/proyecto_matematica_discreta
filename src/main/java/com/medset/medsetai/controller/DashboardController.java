@@ -3,6 +3,7 @@ package com.medset.medsetai.controller;
 import com.medset.medsetai.service.AiService;
 import com.medset.medsetai.service.OllamaProvider;
 import com.medset.medsetai.util.AppConfig;
+import com.medset.medsetai.util.ChatMarkdownRenderer;
 import com.medset.medsetai.util.SceneManager;
 
 import javafx.application.Platform;
@@ -112,16 +113,23 @@ public class DashboardController {
     }
 
     /**
-     * Displays the patient panel and hides the assistant panel.
+     * Opens the patient management screen.
+     *
+     * @throws IllegalStateException if the patient screen cannot be loaded
      */
     @FXML
     private void showPatient() {
+        try {
+            Stage stage = (Stage) patientPanel.getScene().getWindow();
 
-        assistantPanel.setVisible(false);
-        assistantPanel.setManaged(false);
+            SceneManager.switchTo(stage, "patient-view.fxml");
 
-        patientPanel.setVisible(true);
-        patientPanel.setManaged(true);
+        } catch (IOException exception) {
+            throw new IllegalStateException(
+                    "Could not open patient management.",
+                    exception
+            );
+        }
     }
 
     /**
@@ -190,24 +198,38 @@ public class DashboardController {
         messageField.clear();
 
         String finalMessage = message;
+        String assistantPrompt = """
+                Responde en el mismo idioma que la pregunta. Da formato legible
+                con Markdown: usa **negrita** para conceptos importantes, títulos
+                con # y listas cuando ayuden a ordenar la explicación. No muestres
+                las marcas de Markdown como si fueran texto literal.
 
-        Label responseLabel = addAiMessage(
+                Para matemáticas, escribe símbolos Unicode legibles cuando sea
+                posible, por ejemplo A ∪ B, A ∩ B, x ∈ A, x ∉ A, A ⊆ B, ∅,
+                ℕ, ℤ y ℝ. Si necesitas usar LaTeX, delimita las expresiones
+                matemáticas con $...$ o \\(...\\).
+
+                Pregunta:
+                %s
+                """.formatted(finalMessage);
+
+        VBox responseContent = addAiMessage(
                 "Pensando...",
                 selectedModelOption
         );
+        StringBuilder responseText = new StringBuilder();
 
         CompletableFuture
                 .supplyAsync(() -> {
                     AiService requestService = new AiService(
                             createProvider(selectedModelOption)
                     );
-                    return requestService.ask(finalMessage, fragment ->
+                    return requestService.ask(assistantPrompt, fragment ->
                             Platform.runLater(() -> {
-                                if ("Pensando...".equals(responseLabel.getText())) {
-                                    responseLabel.setText("");
-                                }
-                                responseLabel.setText(
-                                        responseLabel.getText() + fragment
+                                responseText.append(fragment);
+                                ChatMarkdownRenderer.render(
+                                        responseContent,
+                                        responseText.toString()
                                 );
                                 chatScrollPane.setVvalue(1.0);
                             })
@@ -223,14 +245,15 @@ public class DashboardController {
                             ? cause.getClass().getSimpleName()
                             : cause.getMessage();
                     Platform.runLater(() -> {
-                        String currentText = responseLabel.getText();
-                        if ("Pensando...".equals(currentText)) {
-                            responseLabel.setText(
+                        if (responseText.isEmpty()) {
+                            ChatMarkdownRenderer.render(
+                                    responseContent,
                                     "No pude obtener una respuesta. " + errorMessage
                             );
                         } else {
-                            responseLabel.setText(
-                                    currentText + "\nNo pude completar la respuesta. "
+                            ChatMarkdownRenderer.render(
+                                    responseContent,
+                                    responseText + "\n\nNo pude completar la respuesta. "
                                             + errorMessage
                             );
                         }
@@ -249,6 +272,7 @@ public class DashboardController {
     private void addUserMessage(String message) {
 
         VBox messageBox = new VBox(4);
+        messageBox.setMaxWidth(Double.MAX_VALUE);
 
         messageBox.getStyleClass()
                 .add("user-message");
@@ -261,6 +285,7 @@ public class DashboardController {
         Label text = new Label(message);
 
         text.setWrapText(true);
+        text.setMaxWidth(Double.MAX_VALUE);
 
         text.getStyleClass()
                 .add("message-text");
@@ -280,9 +305,10 @@ public class DashboardController {
      *
      * @param message response or status text to display
      */
-    private Label addAiMessage(String message, String modelName) {
+    private VBox addAiMessage(String message, String modelName) {
 
         VBox messageBox = new VBox(4);
+        messageBox.setMaxWidth(Double.MAX_VALUE);
 
         messageBox.getStyleClass()
                 .add("ai-message");
@@ -292,12 +318,10 @@ public class DashboardController {
         sender.getStyleClass()
                 .add("message-sender");
 
-        Label text = new Label(message);
-
-        text.setWrapText(true);
-
-        text.getStyleClass()
-                .add("message-text");
+        VBox text = new VBox(7);
+        text.getStyleClass().add("message-content");
+        text.setMaxWidth(Double.MAX_VALUE);
+        ChatMarkdownRenderer.render(text, message);
 
         messageBox.getChildren()
                 .addAll(sender, text);

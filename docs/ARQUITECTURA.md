@@ -1,122 +1,225 @@
-# Arquitectura y referencia del código
+# Arquitectura y guía del proyecto
 
-## Resumen
+## Propósito y límites
 
-MedSet AI es una aplicación Java de escritorio con JavaFX y vistas FXML. La
-clase `MedSetApplication` crea la ventana inicial; los controladores gestionan
-la navegación; `SceneManager` sustituye las escenas; y los servicios aíslan la
-comunicación con modelos de IA.
+MedSet AI es una aplicación de escritorio educativa para practicar ideas de
+teoría de conjuntos con información de pacientes y síntomas simulados. JavaFX
+construye la interfaz; Ollama ejecuta modelos de lenguaje en el equipo; SQLite
+guarda los registros localmente.
 
-El proyecto se encuentra en desarrollo. Esta guía describe lo que hace el
-código actual y señala las partes que todavía son estructuras iniciales, no
-funcionalidad terminada.
+La aplicación no es una herramienta médica. El servicio que normaliza síntomas
+solo transforma texto en etiquetas comparables; no diagnostica enfermedades,
+estima riesgos ni recomienda tratamientos. La selección de pacientes se puede
+preparar para un análisis, pero todavía no existen las operaciones de
+conjuntos, el informe ni el gráfico.
 
-## Inicio y navegación
+## Tecnologías y versiones
 
-| Archivo | Responsabilidad |
+| Componente | Versión o configuración |
 | --- | --- |
-| `Launcher.java` | Punto de entrada auxiliar que inicia `MedSetApplication` con `Application.launch`. |
-| `MedSetApplication.java` | Carga `welcome-view.fxml`, crea la escena inicial y configura el título y tamaño mínimo de la ventana. |
-| `util/SceneManager.java` | Carga una vista desde `resources/.../view`, crea una escena de 1200 × 750 y la asigna a la ventana existente. |
-| `controller/WelcomeController.java` | Cambia desde la bienvenida al dashboard o a la pantalla de créditos. |
-| `controller/CreditsController.java` | Regresa desde la pantalla informativa a la bienvenida. |
-| `controller/DashboardController.java` | Gestiona la navegación entre paneles, el chat asíncrono y las acciones provisionales del formulario de paciente. |
+| Java | JDK 25 |
+| JavaFX | 21.0.6 (FXML y controles) |
+| Maven | Wrapper incluido en el repositorio |
+| Ollama | Servidor local compatible con `http://localhost:11434` |
+| Modelos | `gemma3:4b` y `nemotron-3-nano:4b` |
+| Persistencia | SQLite con `sqlite-jdbc` 3.50.3.0 |
+| JSON | Jackson 2.20.0 |
+| Configuración | dotenv-java 3.2.0 y `.env` opcional |
+| Pruebas | JUnit 5 |
 
-`Main.java` (en la raíz) es un lanzador de compatibilidad para delegar en
-`Launcher`; el punto de entrada configurado para JavaFX en Maven es
-`MedSetApplication`.
+La release empaqueta el runtime de Java y las dependencias de JavaFX. Ollama y
+los modelos son dependencias externas y se instalan aparte.
 
-## Vistas y recursos
-
-| Recurso | Contenido |
-| --- | --- |
-| `view/welcome-view.fxml` | Pantalla inicial, logotipos y navegación principal. |
-| `view/credits-view.fxml` | Información del curso, profesor, integrantes y botón para volver. |
-| `view/dashboard-view.fxml` | Diseño del dashboard: barra superior, navegación lateral, chat y formulario de paciente. |
-| `css/app.css` | Estilos compartidos de bienvenida, créditos y dashboard. |
-| `images/medset-logo.png` | Logotipo del proyecto utilizado por las vistas. |
-| `images/jala-logo.png` | Logotipo institucional utilizado en la bienvenida. |
-
-Las vistas hacen referencia a controladores mediante `fx:controller` y enlazan
-eventos con métodos FXML. `DashboardController` implementa las acciones
-declaradas en `dashboard-view.fxml`. El chat llama al servicio en un
-`CompletableFuture` y actualiza los controles JavaFX en el hilo de la interfaz.
-El formulario del paciente todavía solo valida valores vacíos y escribe datos
-en la consola; los informes y gráficos no están implementados.
-
-## Dominio
-
-| Clase | Estado actual |
-| --- | --- |
-| `model/Patient.java` | Marcador vacío para el futuro modelo de paciente simulado. |
-| `model/Symptom.java` | Marcador vacío para el futuro modelo de síntoma. |
-| `model/Pattern.java` | Marcador vacío para patrones de conjuntos. |
-| `model/AnalysisResult.java` | Marcador vacío para el resultado de un análisis. |
-
-Estas clases aún no definen campos, validaciones, operaciones de conjuntos ni
-reglas clínicas o educativas.
-
-## Servicios de inteligencia artificial
-
-| Clase | Responsabilidad |
-| --- | --- |
-| `service/AiProvider.java` | Contrato común para generar respuestas de texto y exponer un nombre. |
-| `service/AiService.java` | Fachada del modelo seleccionado; permite enviar prompts y reemplazar el proveedor activo. |
-| `service/OllamaProvider.java` | Transmite respuestas NDJSON desde `{OLLAMA_URL}/api/chat` usando el modelo seleccionado. |
-
-El dashboard ofrece dos opciones de Ollama local: Gemma 3 4B y Nemotron 3 Nano
-4B (predeterminado). Cada selección crea un proveedor Ollama con su nombre y
-etiqueta de modelo. Las solicitudes se ejecutan en un hilo de
-`CompletableFuture`, evitando bloquear el hilo de interfaz. Las respuestas se
-transmiten en fragmentos; Ollama limita la salida a 512 tokens, desactiva el
-razonamiento de Nemotron para mostrar directamente la respuesta y conserva el
-modelo cargado durante diez minutos.
-
-La gestión de errores del chat muestra el error en la conversación. Los dos
-modelos deben estar instalados en Ollama antes de usarlos; no se requiere una
-clave de API.
-
-## Configuración
-
-`util/AppConfig.java` carga el archivo `.env` en la raíz mediante `dotenv-java`
-y define la URL y ambos modelos de Ollama con valores predeterminados. La
-biblioteca de dotenv está configurada para ignorar que el archivo `.env` no
-exista; las claves opcionales entonces usan sus valores predeterminados.
-
-Usa `.env.example` como plantilla. `.env` y otros archivos `.env.*` están
-ignorados por Git; `.env.example` es la excepción que sí se versiona. La
-aplicación consulta el servidor local de Ollama y no necesita claves de API.
-
-## Dependencias y compilación
-
-`pom.xml` define el artefacto Maven, Java 25, el plugin de JavaFX y las
-dependencias JavaFX, ControlsFX, FormsFX, Ikonli, BootstrapFX, Jackson,
-dotenv-java y JUnit 5.
-
-Comandos de uso habitual:
+## Estructura de paquetes
 
 ```text
-bash ./mvnw test       Ejecuta las pruebas y compila el proyecto
-bash ./mvnw javafx:run Ejecuta la aplicación JavaFX
+src/main/java/com/medset/medsetai/
+├── Launcher.java
+├── MedSetApplication.java
+├── controller/
+│   ├── WelcomeController.java
+│   ├── CreditsController.java
+│   ├── DashboardController.java
+│   └── PatientController.java
+├── model/
+│   ├── Patient.java
+│   ├── Symptom.java
+│   ├── AnalysisResult.java
+│   └── Pattern.java
+├── repository/
+│   ├── DatabaseManager.java
+│   └── PatientRepository.java
+├── service/
+│   ├── AiProvider.java
+│   ├── AiService.java
+│   ├── OllamaProvider.java
+│   ├── PatientService.java
+│   ├── PatientSelectionContext.java
+│   └── SymptomNormalizer.java
+└── util/
+    ├── AppConfig.java
+    ├── SceneManager.java
+    ├── ChatMarkdownFormatter.java
+    └── ChatMarkdownRenderer.java
 ```
 
-En Windows se usa `.\mvnw.cmd` en vez de `./mvnw`.
+Las vistas FXML y la hoja de estilos se encuentran en
+`src/main/resources/com/medset/medsetai/`. Las pruebas están en `src/test/java`.
 
-## Flujo Git del equipo
+## Arranque y navegación
+
+1. `Launcher.main` inicia JavaFX y delega en `MedSetApplication`.
+2. `MedSetApplication.start` inicializa las tablas locales de SQLite y carga
+   `welcome-view.fxml`.
+3. Cada FXML declara su controlador con `fx:controller`. Los controladores
+   responden a los botones y a los eventos de las vistas.
+4. `SceneManager.switchTo` carga otra vista en la ventana existente; no crea
+   otra instancia de la aplicación.
+5. El argumento `--smoke-test` carga las vistas de bienvenida, dashboard,
+   créditos y pacientes, muestra una ventana breve y cierra el proceso. Sirve
+   para verificar recursos y controladores sin enviar peticiones a Ollama.
+
+| Vista | Controlador | Responsabilidad |
+| --- | --- | --- |
+| `welcome-view.fxml` | `WelcomeController` | Inicio y acceso al dashboard o a créditos. |
+| `dashboard-view.fxml` | `DashboardController` | Chat de Ollama y acceso a pacientes. |
+| `credits-view.fxml` | `CreditsController` | Información del curso y navegación de regreso. |
+| `patient-view.fxml` | `PatientController` | Alta, edición, eliminación y selección de pacientes. |
+
+`Main.java` es un lanzador de compatibilidad en la raíz del proyecto.
+
+## Chat de IA y formato de respuestas
+
+El recorrido de una pregunta es:
+
+1. `DashboardController` lee el texto y el modelo seleccionado.
+2. `AiService` delega la petición en `OllamaProvider`.
+3. `OllamaProvider` envía JSON por HTTP a `{OLLAMA_URL}/api/chat`. El cuerpo
+   solicita transmisión NDJSON, salida en streaming, hasta 512 tokens, y
+   mantiene el modelo cargado durante diez minutos. `think: false` evita que
+   Nemotron devuelva razonamiento en lugar de la respuesta.
+4. Cada fragmento regresa al hilo JavaFX mediante `Platform.runLater`; las
+   llamadas de red no bloquean la interfaz.
+5. `ChatMarkdownFormatter` interpreta párrafos, títulos, listas, énfasis,
+   código y comandos matemáticos comunes. `ChatMarkdownRenderer` crea nodos de
+   texto JavaFX con estilos CSS; no interpreta HTML del modelo.
+
+El prompt del chat pide contestar en el idioma de la pregunta, usar Markdown
+para enfatizar y preferir símbolos matemáticos Unicode. El formateador también
+interpreta negrita (`**texto**`), cursiva (`*texto*`), código con acentos
+graves, encabezados `#`, listas numeradas y con viñetas, citas y bloques de
+código. Convierte comandos LaTeX frecuentes como `\cup`, `\cap`, `\in`,
+`\subseteq`, `\emptyset`, `\mathbb{R}`, `\frac{a}{b}` y `x^2` en notación
+legible. No implementa un motor tipográfico completo de LaTeX.
+
+Un error de conexión, tiempo de espera, modelo ausente o respuesta vacía se
+muestra junto al mensaje; no se oculta como una respuesta satisfactoria.
+
+## Gestión de pacientes, normalización y SQLite
+
+El flujo de pacientes está separado por responsabilidades:
+
+1. `PatientController` obtiene el formulario, valida que la edad sea numérica
+   y coordina alta, edición, eliminación y selección múltiple. Las peticiones
+   que llaman a IA corren en `CompletableFuture`; las actualizaciones de UI
+   regresan al hilo JavaFX.
+2. `PatientService` valida nombre, edad (0–130) y síntomas, solicita la
+   normalización y delega la persistencia.
+3. `SymptomNormalizer` envía a Nemotron un prompt para devolver JSON con el
+   idioma detectado y etiquetas normalizadas en inglés (`snake_case`), sin
+   inferir síntomas ausentes ni diagnosticar. El resultado se valida y se
+   eliminan duplicados conservando el orden.
+4. `PatientRepository` crea y actualiza al paciente y sus síntomas en una
+   transacción. Usa `PreparedStatement`, recupera el ID de SQLite y consulta,
+   lista o elimina los registros.
+5. `DatabaseManager` crea y configura la conexión JDBC, habilita claves foráneas
+   y crea las tablas `patients` y `symptoms`. La eliminación en cascada quita
+   los síntomas asociados.
+
+La base de datos se guarda en:
+
+```text
+<carpeta del usuario>/.medset-ai/medset.db
+```
+
+En Windows, por ejemplo, suele ser `C:\Users\<usuario>\.medset-ai\medset.db`.
+Los registros se guardan localmente. Al crear o actualizar un paciente, el
+texto de síntomas se envía al servidor Ollama local para normalizar etiquetas;
+los demás datos del paciente no forman parte de esa solicitud.
+
+`PatientSelectionContext` mantiene en memoria una copia de los pacientes
+seleccionados para un futuro módulo de análisis; esa selección no reemplaza ni
+modifica los registros persistidos.
+
+## Modelos del dominio
+
+| Modelo | Datos/uso |
+| --- | --- |
+| `Patient` | ID local, nombre, edad y síntomas asociados. |
+| `Symptom` | Texto original, nombre normalizado, idioma y relaciones por ID. |
+| `Pattern` | Estructura inicial para patrones educativos; aún sin operaciones. |
+| `AnalysisResult` | Estructura inicial para resultados e informes futuros. |
+
+Los dos últimos modelos todavía no implementan algoritmos de conjuntos ni
+reglas de análisis.
+
+## Configuración y conexión con Ollama
+
+`AppConfig` carga `.env` si existe; también funciona sin el archivo usando estos
+valores predeterminados:
+
+| Variable | Uso | Predeterminado |
+| --- | --- | --- |
+| `OLLAMA_URL` | URL del servidor Ollama | `http://localhost:11434` |
+| `OLLAMA_MODEL` | Modelo Gemma | `gemma3:4b` |
+| `OLLAMA_NEMOTRON_MODEL` | Modelo Nemotron | `nemotron-3-nano:4b` |
+
+El servidor local debe estar ejecutándose y el modelo seleccionado debe estar
+descargado. Para descargarlo desde una terminal:
+
+```text
+ollama pull nemotron-3-nano:4b
+ollama pull gemma3:4b
+```
+
+No hacen falta claves de API en la nube. Si el servidor usa otra dirección,
+configura `OLLAMA_URL`; la llamada de chat usa el endpoint `/api/chat`.
+
+## Pruebas, ejecución y empaquetado
+
+En Windows:
+
+```powershell
+.\mvnw.cmd test
+.\mvnw.cmd javafx:run
+.\mvnw.cmd javafx:run '-Djavafx.args=--smoke-test'
+```
+
+En macOS o Linux:
+
+```bash
+bash ./mvnw test
+bash ./mvnw javafx:run
+bash ./mvnw javafx:run '-Djavafx.args=--smoke-test'
+```
+
+Las pruebas unitarias comprueban el servicio de IA, el protocolo de Ollama y el
+formateo de Markdown/notación matemática. GitHub Actions ejecuta las pruebas,
+crea e instala los paquetes nativos de Windows, Ubuntu y macOS y ejecuta el
+smoke test. Los instaladores no contienen Ollama ni los modelos.
+
+## Dependencias principales
+
+`pom.xml` declara JavaFX Controls/FXML 21.0.6, ControlsFX, FormsFX, Ikonli,
+BootstrapFX, Jackson, dotenv-java, SQLite JDBC y JUnit 5. El Maven Wrapper
+permite compilar sin instalar Maven globalmente. `javafx.version` centraliza la
+versión de JavaFX compartida por Controls y FXML.
+
+## Flujo Git
 
 - `main` es la rama de integración.
-- Cada persona desarrolla en una rama propia, por ejemplo `dev-jose`.
-- Los cambios llegan a `main` mediante pull request y revisión.
-- Antes de abrir un pull request, ejecuta la verificación Maven y registra en
-  su descripción lo que cambió, cómo se verificó y cualquier pendiente.
-- El workflow `.github/workflows/maven.yml` verifica los pull requests y las
-  actualizaciones de `main`.
-
-## Pendientes conocidos
-
-1. Completar los modelos vacíos y definir las operaciones educativas de teoría
-   de conjuntos.
-2. Añadir validación de entrada y conectar el formulario del paciente a un flujo
-   educativo de análisis.
-3. Definir y probar la generación del informe y la visualización gráfica antes
-   de presentar esos controles como funcionales.
+- Desarrolla en una rama de trabajo, por ejemplo `dev-jose`.
+- Abre un Pull Request hacia `main` y revisa los checks de GitHub Actions.
+- Las releases se publican con tags `vX.Y.Z`; Actions crea adjuntos nativos
+  solo si pasan las pruebas de empaquetado e instalación de todas las
+  plataformas.
