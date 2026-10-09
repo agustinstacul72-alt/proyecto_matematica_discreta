@@ -1,9 +1,11 @@
 package com.medset.medsetai.model;
 
 /**
- * Placeholder for the educational output produced by a future symptom analysis.
+ * Represents the result of a set-theory analysis.
  *
- * <p>No fields or analysis behavior are implemented yet.</p>
+ * <p>This model is reserved for the analysis module and can later contain
+ * the selected patients, mathematical sets, operation results, and
+ * information required by the report and graph views.</p>
  */
 public class AnalysisResult {
 }

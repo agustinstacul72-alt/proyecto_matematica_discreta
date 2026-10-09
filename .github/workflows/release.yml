@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: Release version, for example 1.0.0
+        description: Release version, for example 1.0.4
         required: true
         type: string
 
@@ -72,7 +72,7 @@ jobs:
       - name: Add application jar to installer input
         shell: bash
         run: |
-          cp target/medset-ai-1.0.3.jar target/package-input/medset-ai.jar
+          cp target/medset-ai-1.0.4.jar target/package-input/medset-ai.jar
 
       - name: Create and smoke-test native application image
         shell: bash

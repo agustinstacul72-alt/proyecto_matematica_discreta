@@ -7,7 +7,7 @@
 
   <p>
     <img src="https://img.shields.io/badge/Java-25-ED8B00?logo=openjdk&logoColor=white" alt="Java 25">
-    <img src="https://img.shields.io/badge/JavaFX-21-1B6AC6" alt="JavaFX 21">
+    <img src="https://img.shields.io/badge/JavaFX-21.0.6-1B6AC6" alt="JavaFX 21.0.6">
     <img src="https://img.shields.io/badge/License-MIT-2563EB" alt="Licencia MIT">
   </p>
 
@@ -35,23 +35,30 @@ El repositorio original contenía únicamente un `Main.java` vacío y un README
 inicial. Esta rama incorpora la aplicación JavaFX existente, su configuración
 Maven, recursos, documentación y una plantilla segura de configuración local.
 
-## Estado actual
+## Qué hace la aplicación
 
-- Pantalla de bienvenida y pantalla informativa del proyecto.
-- Dashboard con chat conectado a los modelos de Ollama y un formulario de
-  paciente en desarrollo.
-- Dos modelos locales de Ollama: Gemma 3 4B y Nemotron 3 Nano 4B (predeterminado).
-- Configuración de los modelos locales mediante archivo `.env`.
-- Los modelos `Patient`, `Symptom`, `Pattern` y `AnalysisResult` son
-  actualmente marcadores vacíos.
-- La generación de informes de paciente y gráficos aún son acciones
-  provisionales; consulta [`docs/ARQUITECTURA.md`](docs/ARQUITECTURA.md).
+MedSet AI es una aplicación educativa de escritorio para estudiar teoría de
+conjuntos usando ejemplos de síntomas simulados. Incluye un asistente de texto
+con Ollama, almacenamiento local de pacientes y normalización de síntomas para
+que nombres equivalentes puedan compararse como elementos de conjuntos.
+
+El asistente presenta sus respuestas con formato Markdown (negrita, títulos,
+listas y bloques de código) y convierte notación matemática LaTeX habitual a
+símbolos Unicode legibles, como `∪`, `∩`, `∈`, `⊆`, `∅` y `ℝ`.
+
+**No es una herramienta médica:** no diagnostica, no recomienda tratamientos
+y no evalúa riesgos clínicos. El chat es un asistente general y la
+normalización de síntomas solo organiza texto para ejercicios educativos.
+
+La administración y persistencia de pacientes están implementadas. La selección
+de pacientes se puede preparar para análisis; la ejecución de operaciones de
+conjuntos, el informe y los gráficos todavía no están implementados.
 
 ## Versiones y requisitos
 
 | Componente | Versión para esta release | ¿Se incluye en el instalador? |
 | --- | --- | --- |
-| MedSet AI | `1.0.3` | Sí |
+| MedSet AI | `1.0.4` | Sí |
 | Java | 25 | Sí, como runtime privado de la aplicación |
 | JavaFX | 21.0.6 | Sí, junto con la aplicación |
 | Ollama | `0.40.1` fue la versión probada durante el desarrollo | No |
@@ -86,6 +93,19 @@ En macOS o Linux:
 ```bash
 bash ./mvnw javafx:run
 ```
+
+Para cargar las vistas y comprobar el arranque automáticamente:
+
+```powershell
+.\mvnw.cmd javafx:run '-Djavafx.args=--smoke-test'
+```
+
+```bash
+bash ./mvnw javafx:run '-Djavafx.args=--smoke-test'
+```
+
+El modo de prueba inicializa SQLite, carga las vistas de bienvenida, dashboard,
+créditos y pacientes, muestra la ventana y termina automáticamente.
 
 ## Descargar e instalar la aplicación
 
@@ -123,20 +143,23 @@ aplicación o en el entorno del sistema.
 
 ## Crear instaladores de una release
 
-Al crear y subir un tag de versión (`v1.0.3`, por ejemplo), GitHub Actions
+Al crear y subir un tag de versión (`v1.0.4`, por ejemplo), GitHub Actions
 ejecuta las pruebas, genera los instaladores nativos y comprueba que la aplicación
 instalada arranque en Windows, Linux y macOS. Si todos los trabajos terminan
 correctamente, el workflow crea una GitHub Release con los instaladores
 `.exe`/`.msi`, `.deb` y `.pkg` adjuntos. También puedes iniciar el workflow
 manualmente para probar la creación e instalación sin publicar una release.
 
-Para publicar una nueva versión desde la terminal:
+Publica una release **solo después de que el pull request se haya integrado
+en `main` y sus verificaciones hayan terminado correctamente**. Crea el tag en
+el commit integrado de `main`, no en `dev-jose` ni en una rama con cambios
+pendientes:
 
 ```bash
 git switch main
-git pull
-git tag v1.0.3
-git push origin v1.0.3
+git pull origin main
+git tag v1.0.4
+git push origin v1.0.4
 ```
 
 Los instaladores incluyen Java 25 y JavaFX 21.0.6; no requieren que el usuario
@@ -149,10 +172,6 @@ las vistas, pero no instala Ollama ni descarga modelos.
 Antes de publicar, confirma que el workflow **Build release installers** acabó
 con éxito en los tres sistemas operativos. No reutilices un tag de versión ya
 publicado.
-
-La aplicación se inicia desde
-`com.medset.medsetai.MedSetApplication`. `Main.java` se conserva como un
-lanzador de compatibilidad para quienes ejecuten la clase `Main` desde un IDE.
 
 ## Configuración de Ollama desde el código fuente
 
@@ -177,10 +196,31 @@ clave de API ni activar facturación de una API en la nube. Cada modelo debe
 descargarse antes de seleccionarlo. La primera consulta puede tardar más si
 Ollama todavía lo está cargando.
 
-Ambos modelos transmiten las respuestas mientras se generan para que el
-texto empiece a aparecer antes de que termine la respuesta completa. Ollama
-desactiva el razonamiento visible de Nemotron para que los 512 tokens de salida
-se usen en la respuesta y conserva cada modelo cargado durante diez minutos.
+Ambos modelos transmiten las respuestas mientras se generan para que el texto
+empiece a aparecer antes de que termine la respuesta completa. El chat convierte
+Markdown y notación matemática de la respuesta en texto enriquecido JavaFX.
+Ollama desactiva el razonamiento visible de Nemotron para que los 512 tokens de
+salida se usen en la respuesta y conserva cada modelo cargado durante diez
+minutos.
+
+## Cómo se conectan las partes
+
+```text
+Launcher / MedSetApplication
+    ├── welcome-view.fxml → WelcomeController → SceneManager
+    ├── dashboard-view.fxml → DashboardController
+    │       ├── AiService → OllamaProvider → http://localhost:11434/api/chat
+    │       └── ChatMarkdownFormatter → ChatMarkdownRenderer → controles JavaFX
+    ├── credits-view.fxml → CreditsController
+    └── patient-view.fxml → PatientController
+            └── PatientService
+                    ├── SymptomNormalizer → AiService → OllamaProvider
+                    └── PatientRepository → DatabaseManager → SQLite local
+```
+
+La [guía de arquitectura](docs/ARQUITECTURA.md) documenta las clases,
+responsabilidades, flujos de datos, base de datos, conexiones y funcionalidades
+pendientes.
 
 ## Verificación
 
