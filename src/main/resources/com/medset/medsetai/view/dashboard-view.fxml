@@ -26,231 +26,103 @@
               spacing="15"
               styleClass="dashboard-top-bar">
 
-            <Button text="← Main"
+            <Button text="← Volver"
                     onAction="#handleBackToWelcome"
                     styleClass="secondary-button"/>
 
-            <Label text="MedSet AI"
-                   styleClass="dashboard-app-title"/>
-
             <Region HBox.hgrow="ALWAYS"/>
-
-            <Label text="Educational Simulator"
-                   styleClass="dashboard-status-label"/>
 
         </HBox>
     </top>
 
-
-    <!-- SIDEBAR -->
-    <left>
-        <VBox spacing="10"
-              prefWidth="230"
-              styleClass="dashboard-sidebar">
-
-            <Label text="DASHBOARD"
-                   styleClass="sidebar-title"/>
-
-            <Button text="🤖  Ollama Assistant"
-                    onAction="#showAssistant"
-                    maxWidth="Infinity"
-                    styleClass="sidebar-button"/>
-
-            <Button text="👤  Patient"
-                    onAction="#showPatient"
-                    maxWidth="Infinity"
-                    styleClass="sidebar-button"/>
-
-        </VBox>
-    </left>
-
-
     <!-- MAIN CONTENT -->
     <center>
-        <StackPane>
+        <VBox fx:id="calculatorPanel"
+              spacing="20"
+              alignment="CENTER"
+              styleClass="dashboard-content">
 
-            <!-- ========================= -->
-            <!-- AI ASSISTANT PANEL -->
-            <!-- ========================= -->
+            <Label text="Calculadora de conjuntos" styleClass="panel-title"/>
 
-            <VBox fx:id="assistantPanel"
-                  spacing="18"
-                  styleClass="dashboard-content">
+            <StackPane VBox.vgrow="ALWAYS" alignment="CENTER">
 
-                <VBox spacing="5">
+                <VBox fx:id="selectorPanel" spacing="20" alignment="CENTER">
 
-                    <Label text="Ollama Assistant"
-                           styleClass="panel-title"/>
+                    <Label text="Elegí una operación" styleClass="section-title"/>
 
-                    <Label text="Ask questions about set theory, mathematics, or the MedSet AI project."
-                           styleClass="panel-description"/>
+                    <HBox spacing="20" alignment="CENTER">
 
-                </VBox>
+                        <Button onAction="#elegirUnion" styleClass="op-card">
+                            <graphic>
+                                <VBox alignment="CENTER" spacing="6">
+                                    <Label text="∪" styleClass="op-symbol"/>
+                                    <Label text="Unión" styleClass="op-name"/>
+                                </VBox>
+                            </graphic>
+                        </Button>
 
+                        <Button onAction="#elegirInterseccion" styleClass="op-card">
+                            <graphic>
+                                <VBox alignment="CENTER" spacing="6">
+                                    <Label text="∩" styleClass="op-symbol"/>
+                                    <Label text="Intersección" styleClass="op-name"/>
+                                </VBox>
+                            </graphic>
+                        </Button>
 
-                <!-- CHAT -->
-                <ScrollPane fx:id="chatScrollPane"
-                            fitToWidth="true"
-                            VBox.vgrow="ALWAYS"
-                            styleClass="chat-scroll">
+                        <Button onAction="#elegirDiferencia" styleClass="op-card">
+                            <graphic>
+                                <VBox alignment="CENTER" spacing="6">
+                                    <Label text="-" styleClass="op-symbol"/>
+                                    <Label text="Diferencia" styleClass="op-name"/>
+                                </VBox>
+                            </graphic>
+                        </Button>
 
-                    <VBox fx:id="chatContainer"
-                          spacing="12"
-                          styleClass="chat-container">
-
-                        <VBox spacing="4"
-                              styleClass="ai-message">
-
-                            <Label text="MedSet AI"
-                                   styleClass="message-sender"/>
-
-                            <Label text="Hola, ¿en qué puedo ayudarte?"
-                                   wrapText="true"
-                                   styleClass="message-text"/>
-
-                        </VBox>
-
-                    </VBox>
-
-                </ScrollPane>
-
-
-                <!-- OLLAMA MODEL -->
-                <HBox alignment="CENTER_LEFT"
-                      spacing="10">
-
-                    <Label text="Ollama Model:"
-                           styleClass="field-label"/>
-
-                    <ComboBox fx:id="assistantModelComboBox"
-                              prefWidth="270"
-                              styleClass="model-combo"/>
-
-                </HBox>
-
-
-                <!-- INPUT -->
-                <HBox spacing="10"
-                      alignment="CENTER_LEFT">
-
-                    <TextField fx:id="messageField"
-                               promptText="Escribe tu mensaje..."
-                               onAction="#handleSendMessage"
-                               HBox.hgrow="ALWAYS"
-                               styleClass="message-input"/>
-
-                    <Button text="➤"
-                            onAction="#handleSendMessage"
-                            styleClass="send-button"/>
-
-                </HBox>
-
-            </VBox>
-
-
-            <!-- ========================= -->
-            <!-- PATIENT PANEL -->
-            <!-- ========================= -->
-
-            <VBox fx:id="patientPanel"
-                  spacing="20"
-                  visible="false"
-                  managed="false"
-                  styleClass="dashboard-content">
-
-                <VBox spacing="5">
-
-                    <Label text="Patient"
-                           styleClass="panel-title"/>
-
-                    <Label text="Enter simulated patient information for educational set analysis."
-                           styleClass="panel-description"/>
-
-                </VBox>
-
-
-                <!-- PATIENT DATA -->
-
-                <VBox spacing="12"
-                      styleClass="patient-form">
-
-                    <Label text="Patient Information"
-                           styleClass="section-title"/>
-
-                    <HBox spacing="15">
-
-                        <VBox spacing="6"
-                              HBox.hgrow="ALWAYS">
-
-                            <Label text="Name"
-                                   styleClass="field-label"/>
-
-                            <TextField fx:id="patientNameField"
-                                       promptText="Patient name"
-                                       styleClass="form-input"/>
-
-                        </VBox>
-
-                        <VBox spacing="6"
-                              prefWidth="150">
-
-                            <Label text="Age"
-                                   styleClass="field-label"/>
-
-                            <TextField fx:id="patientAgeField"
-                                       promptText="Age"
-                                       styleClass="form-input"/>
-
-                        </VBox>
+                        <Button onAction="#elegirSimetrica" styleClass="op-card">
+                            <graphic>
+                                <VBox alignment="CENTER" spacing="6">
+                                    <Label text="Δ" styleClass="op-symbol"/>
+                                    <Label text="Dif. Simétrica" styleClass="op-name"/>
+                                </VBox>
+                            </graphic>
+                        </Button>
 
                     </HBox>
+                </VBox>
 
+                <!-- ===== PANTALLA 2: INGRESAR CONJUNTOS ===== -->
+                <VBox fx:id="inputPanel" spacing="14"
+                      alignment="TOP_CENTER"
+                      maxWidth="480"
+                      maxHeight="-Infinity"
+                      visible="false"
+                      managed="false"
+                      styleClass="patient-form">
 
-                    <Label text="Symptoms"
-                           styleClass="field-label"/>
+                    <HBox alignment="CENTER_LEFT">
+                        <Button text="← Cambiar operación" onAction="#volverAlSelector"
+                                styleClass="secondary-button"/>
+                    </HBox>
 
-                    <TextArea fx:id="symptomsArea"
-                              promptText="Enter the simulated symptoms here..."
-                              wrapText="true"
-                              VBox.vgrow="ALWAYS"
-                              styleClass="symptoms-area"/>
+                    <Label fx:id="operacionLabel" styleClass="section-title"/>
+
+                    <Label text="Conjunto A" styleClass="field-label"/>
+                    <TextField fx:id="conjuntoAField" promptText="Ej: 1, 2, 3" styleClass="form-input"/>
+
+                    <Label text="Conjunto B" styleClass="field-label"/>
+                    <TextField fx:id="conjuntoBField" promptText="Ej: 3, 4, 5" styleClass="form-input"/>
+
+                    <Button text="Calcular" onAction="#handleCalcular" styleClass="primary-button"/>
+
+                    <Label fx:id="resultadoLabel" wrapText="true" styleClass="result-text"/>
 
                 </VBox>
 
+            </StackPane>
 
-                <!-- AI MODEL -->
+        </VBox>
 
-                <HBox alignment="CENTER_LEFT"
-                      spacing="10">
-
-                    <Label text="Ollama Model:"
-                           styleClass="field-label"/>
-
-                    <ComboBox fx:id="patientModelComboBox"
-                              prefWidth="270"
-                              styleClass="model-combo"/>
-
-                </HBox>
-
-
-                <!-- ACTIONS -->
-
-                <HBox alignment="CENTER_RIGHT"
-                      spacing="12">
-
-                    <Button text="Mostrar Informe"
-                            onAction="#handleShowReport"
-                            styleClass="primary-button"/>
-
-                    <Button text="Graficar"
-                            onAction="#handleGraph"
-                            styleClass="secondary-button"/>
-
-                </HBox>
-
-            </VBox>
-
-        </StackPane>
     </center>
 
 </BorderPane>

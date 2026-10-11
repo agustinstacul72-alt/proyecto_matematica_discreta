@@ -231,186 +231,69 @@
     -fx-text-fill: #64748B;
 }
 
+/* CALCULADORA */
 
-/* CHAT */
-
-.chat-scroll {
-    -fx-background-color: transparent;
-    -fx-background: transparent;
-    -fx-border-color: #E2E8F0;
-    -fx-border-radius: 10;
-    -fx-background-radius: 10;
-}
-
-.chat-scroll .viewport {
+.op-card {
+    -fx-pref-width: 180;
+    -fx-pref-height: 180;
+    -fx-min-width: 180;
+    -fx-min-height: 180;
     -fx-background-color: white;
+    -fx-border-color: #CBD5E1;
+    -fx-border-width: 2;
+    -fx-border-radius: 14;
+    -fx-background-radius: 14;
+    -fx-cursor: hand;
 }
 
-.chat-container {
-    -fx-background-color: white;
-    -fx-padding: 20;
-}
-
-
-/* MESSAGES */
-
-.ai-message {
+.op-card:hover {
+    -fx-border-color: #2563EB;
     -fx-background-color: #EFF6FF;
-    -fx-padding: 12;
-    -fx-background-radius: 10;
 }
 
-.user-message {
-    -fx-background-color: #F1F5F9;
-    -fx-padding: 12;
-    -fx-background-radius: 10;
-}
-
-.message-sender {
-    -fx-font-size: 11px;
+.op-symbol {
+    -fx-font-size: 68px;
     -fx-font-weight: 700;
-    -fx-text-fill: #64748B;
+    -fx-text-fill: #2563EB;
 }
 
-.message-text {
-    -fx-font-size: 14px;
-    -fx-text-fill: #0F172A;
-}
-
-.message-content {
-    -fx-fill-width: true;
-}
-
-.markdown-run {
-    -fx-font-size: 14px;
-    -fx-fill: #0F172A;
-}
-
-.markdown-bold {
-    -fx-font-weight: 700;
-}
-
-.markdown-italic {
-    -fx-font-style: italic;
-}
-
-.markdown-strikethrough {
-    -fx-strikethrough: true;
-}
-
-.markdown-heading-1 .markdown-run {
-    -fx-font-size: 24px;
-    -fx-font-weight: 700;
-}
-
-.markdown-heading-2 .markdown-run {
-    -fx-font-size: 21px;
-    -fx-font-weight: 700;
-}
-
-.markdown-heading-3 .markdown-run {
-    -fx-font-size: 18px;
-    -fx-font-weight: 700;
-}
-
-.markdown-heading-4 .markdown-run,
-.markdown-heading-5 .markdown-run,
-.markdown-heading-6 .markdown-run {
-    -fx-font-size: 16px;
-    -fx-font-weight: 700;
-}
-
-.markdown-list-marker {
-    -fx-fill: #2563EB;
-    -fx-font-size: 14px;
-    -fx-font-weight: 700;
-}
-
-.markdown-quote-mark {
-    -fx-fill: #94A3B8;
-    -fx-font-size: 18px;
-    -fx-font-weight: 700;
-}
-
-.markdown-code-block {
-    -fx-background-color: #E2E8F0;
-    -fx-background-radius: 6;
-    -fx-padding: 9;
-}
-
-.markdown-code {
-    -fx-font-family: "Consolas", "Monospaced";
-    -fx-fill: #334155;
-}
-
-
-/* INPUT */
-
-.field-label {
-    -fx-font-size: 13px;
+.op-name {
+    -fx-font-size: 15px;
     -fx-font-weight: 600;
     -fx-text-fill: #334155;
 }
 
-.model-combo {
-    -fx-background-color: white;
-    -fx-border-color: #CBD5E1;
-    -fx-border-radius: 8;
-    -fx-background-radius: 8;
-}
-
-.message-input {
-    -fx-background-color: white;
-    -fx-border-color: #CBD5E1;
-    -fx-border-radius: 9;
-    -fx-background-radius: 9;
-    -fx-padding: 12;
-    -fx-font-size: 14px;
-}
-
-.send-button {
-    -fx-background-color: #2563EB;
-    -fx-text-fill: white;
-    -fx-font-size: 18px;
+.result-text {
+    -fx-font-size: 20px;
     -fx-font-weight: 700;
-    -fx-padding: 10 17;
-    -fx-background-radius: 9;
-    -fx-cursor: hand;
+    -fx-text-fill: #1D4ED8;
 }
 
-.send-button:hover {
-    -fx-background-color: #1D4ED8;
-}
-
-
-/* PATIENT */
-
-.patient-form {
+.calc-form {
     -fx-background-color: white;
-    -fx-padding: 22;
-    -fx-background-radius: 10;
+    -fx-padding: 30;
+    -fx-background-radius: 14;
     -fx-border-color: #E2E8F0;
-    -fx-border-radius: 10;
+    -fx-border-radius: 14;
 }
 
 .section-title {
-    -fx-font-size: 17px;
+    -fx-font-size: 24px;
     -fx-font-weight: 700;
     -fx-text-fill: #0F172A;
 }
 
-.form-input {
-    -fx-background-color: #F8FAFC;
-    -fx-border-color: #CBD5E1;
-    -fx-border-radius: 8;
-    -fx-background-radius: 8;
-    -fx-padding: 11;
+.field-label {
+    -fx-font-size: 16px;
+    -fx-font-weight: 600;
+    -fx-text-fill: #334155;
 }
 
-.symptoms-area {
+.form-input {
+    -fx-font-size: 17px;
     -fx-background-color: #F8FAFC;
     -fx-border-color: #CBD5E1;
     -fx-border-radius: 8;
     -fx-background-radius: 8;
-    -fx-font-size: 14px;
+    -fx-padding: 12;
 }
