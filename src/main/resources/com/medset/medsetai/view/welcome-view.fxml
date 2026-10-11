@@ -19,56 +19,35 @@
           maxWidth="700"
           styleClass="welcome-container">
 
-        <ImageView fitWidth="150"
-                   fitHeight="150"
+        <ImageView fitWidth="300"
+                   fitHeight="300"
                    preserveRatio="true">
-
-            <image>
-                <Image url="@../images/medset-logo.png"/>
-            </image>
-
-        </ImageView>
-
-        <Label text="MedSet AI"
-               styleClass="welcome-title"/>
-
-        <Label text="An educational platform for symptom analysis using set theory and artificial intelligence."
-               wrapText="true"
-               maxWidth="600"
-               styleClass="welcome-subtitle"/>
-
-        <Label text="Learn • Analyze • Understand"
-               styleClass="welcome-tagline"/>
-
-        <HBox alignment="CENTER"
-              spacing="15">
-
-            <Button text="Get Started"
-                    onAction="#handleStart"
-                    styleClass="primary-button"/>
-
-            <Button text="About the Project"
-                    onAction="#handleCredits"
-                    styleClass="secondary-button"/>
-
-        </HBox>
-
-        <Label text="Educational simulator • Not a medical diagnostic tool"
-               styleClass="welcome-disclaimer"/>
-
-        <!-- Jala University -->
-
-        <ImageView fitWidth="133"
-                   fitHeight="63"
-                   preserveRatio="true"
-                   opacity="0.85"
-                   styleClass="jala-logo">
 
             <image>
                 <Image url="@../images/jala-logo.png"/>
             </image>
 
         </ImageView>
+
+        <Label text="Calculadora de Conjuntos Numericos"
+               wrapText="true"
+               maxWidth="600"
+               textAlignment="CENTER"
+               alignment="CENTER"
+               styleClass="welcome-subtitle"/>
+
+        <HBox alignment="CENTER"
+              spacing="15">
+
+            <Button text="Calculadora"
+                    onAction="#handleStart"
+                    styleClass="primary-button"/>
+
+            <Button text="Integrantes"
+                    onAction="#handleCredits"
+                    styleClass="secondary-button"/>
+
+        </HBox>
 
     </VBox>
 

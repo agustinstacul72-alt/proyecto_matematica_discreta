@@ -1,7 +1,5 @@
 package com.medset.medsetai;
 
-import com.medset.medsetai.repository.DatabaseManager;
-
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
@@ -11,47 +9,27 @@ import javafx.stage.Stage;
 import java.io.IOException;
 
 /**
- * Entry point of the MedSet AI JavaFX application.
- *
- * <p>Initializes the local database and displays the welcome screen.
- * An optional smoke-test argument loads important FXML screens to verify
- * that their resources and controllers can be initialized.</p>
+ * Configures and displays the primary MedSet AI window.
  */
 public class MedSetApplication extends Application {
 
     /**
-     * Initializes the database and opens the welcome screen.
+     * Loads the welcome view and displays the application stage.
      *
-     * @param stage primary JavaFX application window
-     * @throws IOException if an FXML resource cannot be loaded
+     * @param stage primary JavaFX window
+     * @throws IOException if the welcome FXML resource cannot be loaded
      */
     @Override
     public void start(Stage stage) throws IOException {
-        DatabaseManager databaseManager = new DatabaseManager();
-        databaseManager.initializeDatabase();
 
-        boolean smokeTest = getParameters()
-                .getRaw()
-                .contains("--smoke-test");
-
+        boolean smokeTest = getParameters().getRaw().contains("--smoke-test");
         if (smokeTest) {
-            FXMLLoader.load(
-                    MedSetApplication.class.getResource(
-                            "/com/medset/medsetai/view/dashboard-view.fxml"
-                    )
-            );
-
-            FXMLLoader.load(
-                    MedSetApplication.class.getResource(
-                            "/com/medset/medsetai/view/credits-view.fxml"
-                    )
-            );
-
-            FXMLLoader.load(
-                    MedSetApplication.class.getResource(
-                            "/com/medset/medsetai/view/patient-view.fxml"
-                    )
-            );
+            FXMLLoader.load(MedSetApplication.class.getResource(
+                    "/com/medset/medsetai/view/dashboard-view.fxml"
+            ));
+            FXMLLoader.load(MedSetApplication.class.getResource(
+                    "/com/medset/medsetai/view/credits-view.fxml"
+            ));
         }
 
         FXMLLoader loader = new FXMLLoader(
@@ -71,14 +49,5 @@ public class MedSetApplication extends Application {
         if (smokeTest) {
             Platform.runLater(stage::close);
         }
-    }
-
-    /**
-     * Launches the JavaFX application.
-     *
-     * @param args command-line arguments
-     */
-    public static void main(String[] args) {
-        launch(args);
     }
 }
