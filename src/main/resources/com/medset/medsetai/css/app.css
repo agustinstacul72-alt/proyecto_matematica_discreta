@@ -234,10 +234,10 @@
 /* CALCULADORA */
 
 .op-card {
-    -fx-pref-width: 180;
-    -fx-pref-height: 180;
-    -fx-min-width: 180;
-    -fx-min-height: 180;
+    -fx-pref-width: 170;
+    -fx-pref-height: 150;
+    -fx-min-width: 170;
+    -fx-min-height: 150;
     -fx-background-color: white;
     -fx-border-color: #CBD5E1;
     -fx-border-width: 2;
@@ -252,7 +252,7 @@
 }
 
 .op-symbol {
-    -fx-font-size: 68px;
+    -fx-font-size: 54px;
     -fx-font-weight: 700;
     -fx-text-fill: #2563EB;
 }
@@ -296,4 +296,261 @@
     -fx-border-radius: 8;
     -fx-background-radius: 8;
     -fx-padding: 12;
+}
+/* =========================
+   MÓDULOS (inicio)
+   ========================= */
+
+.module-card {
+    -fx-pref-width: 300;
+    -fx-min-height: 160;
+    -fx-max-height: 160;
+    -fx-alignment: TOP_LEFT;
+    -fx-background-color: white;
+    -fx-border-color: #CBD5E1;
+    -fx-border-width: 2;
+    -fx-border-radius: 14;
+    -fx-background-radius: 14;
+    -fx-padding: 18;
+    -fx-cursor: hand;
+}
+
+.module-card:hover {
+    -fx-border-color: #2563EB;
+    -fx-background-color: #EFF6FF;
+}
+
+.module-title {
+    -fx-font-size: 19px;
+    -fx-font-weight: 700;
+    -fx-text-fill: #0F172A;
+}
+
+.module-symbols {
+    -fx-font-size: 22px;
+    -fx-font-weight: 700;
+    -fx-text-fill: #2563EB;
+}
+
+.module-desc {
+    -fx-font-size: 13px;
+    -fx-text-fill: #475569;
+}
+
+/* =========================
+   COMPARTIDO
+   ========================= */
+
+.plain-scroll, .plain-scroll > .viewport {
+    -fx-background-color: #F8FAFC;
+    -fx-background: #F8FAFC;
+}
+
+.small-button {
+    -fx-background-color: white;
+    -fx-text-fill: #0F172A;
+    -fx-font-size: 13px;
+    -fx-font-weight: 600;
+    -fx-padding: 7 14;
+    -fx-border-color: #CBD5E1;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-cursor: hand;
+}
+
+.small-button:hover {
+    -fx-background-color: #F1F5F9;
+}
+
+.definition-text {
+    -fx-font-size: 14px;
+    -fx-text-fill: #1E3A8A;
+    -fx-background-color: #EFF6FF;
+    -fx-background-radius: 8;
+    -fx-padding: 10;
+}
+
+.detail-text {
+    -fx-font-size: 14px;
+    -fx-text-fill: #334155;
+}
+
+.set-text {
+    -fx-font-size: 15px;
+    -fx-font-weight: 600;
+    -fx-text-fill: #1D4ED8;
+}
+
+.rule-text {
+    -fx-font-size: 14px;
+    -fx-text-fill: #0F172A;
+    -fx-background-color: white;
+    -fx-border-color: #E2E8F0;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-padding: 10 12;
+}
+
+.lab-left {
+    -fx-padding: 25;
+    -fx-background-color: white;
+}
+
+/* Chips de síntomas */
+
+.chip {
+    -fx-background-color: #F1F5F9;
+    -fx-text-fill: #0F172A;
+    -fx-font-size: 13px;
+    -fx-padding: 7 12;
+    -fx-background-radius: 16;
+    -fx-border-color: #CBD5E1;
+    -fx-border-radius: 16;
+    -fx-cursor: hand;
+}
+
+.chip:hover {
+    -fx-border-color: #2563EB;
+}
+
+.chip:selected {
+    -fx-background-color: #2563EB;
+    -fx-text-fill: white;
+    -fx-border-color: #2563EB;
+}
+
+.chip-alarma {
+    -fx-border-color: #F87171;
+}
+
+.chip-alarma:selected {
+    -fx-background-color: #DC2626;
+    -fx-border-color: #DC2626;
+}
+
+.chip-si, .chip-si:disabled {
+    -fx-background-color: #DCFCE7;
+    -fx-border-color: #16A34A;
+    -fx-opacity: 1;
+}
+
+.chip-no, .chip-no:disabled {
+    -fx-background-color: #FEE2E2;
+    -fx-border-color: #DC2626;
+    -fx-opacity: 1;
+}
+
+/* Urgencia */
+
+.badge {
+    -fx-font-size: 15px;
+    -fx-font-weight: 700;
+    -fx-text-fill: white;
+    -fx-padding: 8 16;
+    -fx-background-radius: 20;
+}
+
+.badge-alta { -fx-background-color: #DC2626; }
+.badge-media { -fx-background-color: #D97706; }
+.badge-baja { -fx-background-color: #16A34A; }
+.badge-neutral { -fx-background-color: #94A3B8; }
+
+/* Tarjetas */
+
+.rank-card {
+    -fx-background-color: white;
+    -fx-border-color: #E2E8F0;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+    -fx-padding: 12 14;
+    -fx-cursor: hand;
+}
+
+.rank-card:hover {
+    -fx-border-color: #93C5FD;
+}
+
+.rank-card-selected {
+    -fx-border-color: #2563EB;
+    -fx-border-width: 2;
+    -fx-background-color: #EFF6FF;
+}
+
+.rank-card-out {
+    -fx-opacity: 0.35;
+}
+
+.card-title {
+    -fx-font-size: 15px;
+    -fx-font-weight: 700;
+    -fx-text-fill: #0F172A;
+}
+
+.card-pct {
+    -fx-font-size: 14px;
+    -fx-font-weight: 700;
+    -fx-text-fill: #1D4ED8;
+    -fx-min-width: 70;
+}
+
+.card-detail {
+    -fx-font-size: 13px;
+    -fx-text-fill: #475569;
+}
+
+.jaccard-bar .bar {
+    -fx-background-color: #2563EB;
+    -fx-background-insets: 0;
+    -fx-background-radius: 4;
+}
+
+.jaccard-bar .track {
+    -fx-background-color: #E2E8F0;
+    -fx-background-radius: 4;
+}
+
+.tag {
+    -fx-font-size: 11px;
+    -fx-font-weight: 600;
+    -fx-padding: 3 8;
+    -fx-background-radius: 10;
+}
+
+.tag-ok { -fx-background-color: #DCFCE7; -fx-text-fill: #166534; }
+.tag-muted { -fx-background-color: #F1F5F9; -fx-text-fill: #475569; }
+
+/* Juego */
+
+.score {
+    -fx-font-size: 16px;
+    -fx-font-weight: 700;
+    -fx-text-fill: #1D4ED8;
+}
+
+.game-message {
+    -fx-font-size: 15px;
+    -fx-font-weight: 600;
+    -fx-text-fill: #0F172A;
+    -fx-background-color: white;
+    -fx-border-color: #E2E8F0;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-padding: 10 12;
+}
+
+.game-win { -fx-background-color: #DCFCE7; -fx-border-color: #16A34A; }
+.game-lose { -fx-background-color: #FEE2E2; -fx-border-color: #DC2626; }
+
+.log-box {
+    -fx-background-color: white;
+    -fx-border-color: #E2E8F0;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-padding: 12;
+}
+
+.log-line {
+    -fx-font-family: "Consolas", "Menlo", "Monospaced";
+    -fx-font-size: 12.5px;
+    -fx-text-fill: #334155;
 }
