@@ -128,13 +128,6 @@ Documentación completa:
 - [`docs/CONCEPTOS.md`](docs/CONCEPTOS.md): la matemática del proyecto, con ejemplos.
 - [`docs/ARQUITECTURA.md`](docs/ARQUITECTURA.md): cómo está organizado el código.
 
-## Guion para la demo (5 minutos)
-
-1. **Inicio (30 s):** la idea: paciente = conjunto P, enfermedad = conjunto E.
-2. **Calculadora (1 min 30 s):** «Cargar ejemplo» en ∪ (mostrar inclusión-exclusión), en ⊆ con un contraejemplo en rojo y en A'.
-3. **Triage (1 min 30 s):** «Paciente de ejemplo» varias veces; mostrar el ranking por Jaccard y cómo un síntoma de alarma sube la urgencia a ALTA (Regla 1: P ∩ R ≠ ∅).
-4. **Juego (1 min 30 s):** jugar una ronda usando la pista y leer el registro «C ← { E ∈ C | s ∈ E }».
-
 ## Equipo · Grupo 6
 
 - Daniel Tueros Cueva
