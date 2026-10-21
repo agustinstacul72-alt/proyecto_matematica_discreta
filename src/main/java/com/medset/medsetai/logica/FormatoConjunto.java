@@ -6,16 +6,11 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-/**
- * Convierte texto escrito por el usuario en conjuntos y conjuntos en texto
- * con notación matemática ({a, b, c} o ∅).
- */
 public final class FormatoConjunto {
 
     private FormatoConjunto() {
     }
 
-    /** Orden de presentación: primero los números (de menor a mayor), luego el texto alfabético. */
     public static final Comparator<Object> ORDEN_NATURAL = (x, y) -> {
         String a = String.valueOf(x);
         String b = String.valueOf(y);
@@ -33,10 +28,6 @@ public final class FormatoConjunto {
         return a.compareToIgnoreCase(b);
     };
 
-    /**
-     * Lee un conjunto escrito como "1, 2, 3" o "{fiebre, tos}". Los elementos
-     * repetidos se ignoran porque un conjunto no tiene elementos duplicados.
-     */
     public static Set<String> leer(String texto) {
         Set<String> conjunto = new LinkedHashSet<>();
         if (texto == null) {
@@ -55,7 +46,7 @@ public final class FormatoConjunto {
         return conjunto;
     }
 
-    /** Devuelve "{a, b, c}" ordenado, o "∅" si el conjunto está vacío. */
+
     public static String formatear(Set<?> conjunto) {
         if (conjunto.isEmpty()) {
             return "∅";
@@ -72,7 +63,6 @@ public final class FormatoConjunto {
         return sb.append('}').toString();
     }
 
-    /** Devuelve los elementos ordenados para mostrarlos en pantalla. */
     public static List<String> ordenar(Set<?> conjunto) {
         List<Object> ordenados = new ArrayList<>(conjunto);
         ordenados.sort(ORDEN_NATURAL);

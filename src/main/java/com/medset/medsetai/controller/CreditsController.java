@@ -8,17 +8,8 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 
-/**
- * Handles navigation actions from the project information screen.
- */
 public class CreditsController {
 
-    /**
-     * Returns to the welcome screen in the current window.
-     *
-     * @param event action fired by the close button
-     * @throws IOException if the welcome view cannot be loaded
-     */
     @FXML
     private void handleClose(ActionEvent event) throws IOException {
 

@@ -8,17 +8,10 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 
-/**
- * Configura y muestra la ventana principal de MedSet.
- */
+
 public class MedSetApplication extends Application {
 
-    /**
-     * Loads the welcome view and displays the application stage.
-     *
-     * @param stage primary JavaFX window
-     * @throws IOException if the welcome FXML resource cannot be loaded
-     */
+
     @Override
     public void start(Stage stage) throws IOException {
 

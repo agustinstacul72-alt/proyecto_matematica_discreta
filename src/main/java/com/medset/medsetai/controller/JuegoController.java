@@ -20,10 +20,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Módulo 3: juego "Detective de síntomas". La lógica vive en {@link JuegoDetective};
- * este controlador solo la muestra.
- */
 public class JuegoController {
 
     @FXML private Label puntosLabel;

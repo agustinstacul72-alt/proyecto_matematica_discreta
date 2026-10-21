@@ -18,12 +18,9 @@ import java.io.IOException;
 import java.util.EnumSet;
 import java.util.Set;
 
-/**
- * Módulo 1: calculadora de conjuntos con definición formal, cardinalidad y diagrama de Venn.
- */
+
 public class DashboardController {
 
-    /** Operaciones disponibles, con su símbolo y su definición formal. */
     private enum Operacion {
         UNION("A ∪ B", "A ∪ B = { x | x ∈ A ∨ x ∈ B }  — todo lo que está en A, en B o en ambos."),
         INTERSECCION("A ∩ B", "A ∩ B = { x | x ∈ A ∧ x ∈ B }  — solo lo que está en los dos."),

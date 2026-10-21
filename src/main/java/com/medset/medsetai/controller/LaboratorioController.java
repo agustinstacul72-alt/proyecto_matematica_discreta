@@ -30,13 +30,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-/**
- * Módulo 2: el paciente es un conjunto P ⊆ U y cada enfermedad un conjunto E ⊆ U.
- * Todo el análisis se recalcula en vivo cada vez que cambia P.
- */
+
 public class LaboratorioController {
 
-    /** Pacientes de ejemplo (los mismos de la presentación). */
+
     private static final List<Set<String>> EJEMPLOS = List.of(
             Set.of("fiebre", "tos", "dolor de cabeza", "cansancio"),
             Set.of("fiebre", "tos", "dolor de garganta", "cansancio"),

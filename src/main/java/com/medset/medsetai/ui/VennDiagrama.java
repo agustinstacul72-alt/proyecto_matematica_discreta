@@ -17,13 +17,10 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
 
-/**
- * Diagrama de Venn dibujado con figuras de JavaFX. Muestra los elementos de cada
- * región y resalta la región que corresponde al resultado de la operación.
- */
+
 public class VennDiagrama extends Pane {
 
-    /** Regiones de un diagrama de dos conjuntos dentro del universo U. */
+
     public enum Region { SOLO_A, AMBOS, SOLO_B, FUERA }
 
     private static final double ANCHO = 560;
@@ -45,13 +42,7 @@ public class VennDiagrama extends Pane {
         getStyleClass().add("venn");
     }
 
-    /**
-     * Dibuja A y B (B puede ser null para mostrar un único conjunto) dentro de U
-     * (U puede ser null si no se usa universo).
-     *
-     * @param resaltar regiones que se pintan como resultado
-     * @param alerta   si es true, el resaltado se pinta en rojo (por ejemplo un contraejemplo de ⊆)
-     */
+
     public void dibujar(Set<String> a, Set<String> b, Set<String> universo, String nombreA, String nombreB,
                         EnumSet<Region> resaltar, boolean alerta) {
         getChildren().clear();

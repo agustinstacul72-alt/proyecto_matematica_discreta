@@ -8,19 +8,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
-/**
- * Juego "Detective de síntomas".
- *
- * <p>El sistema elige en secreto una enfermedad X del catálogo D. El jugador
- * pregunta por síntomas: cada pregunta es una prueba de pertenencia s ∈ X.
- * Con cada respuesta el conjunto de candidatos C se filtra por comprensión:</p>
- * <pre>
- *   si s ∈ X:  C ← { E ∈ C | s ∈ E }
- *   si s ∉ X:  C ← { E ∈ C | s ∉ E }
- * </pre>
- * <p>Cada pregunta cuesta puntos, así que conviene elegir síntomas que partan C
- * en dos mitades lo más parecidas posible (como una búsqueda binaria).</p>
- */
+
 public final class JuegoDetective {
 
     public static final int PUNTOS_INICIALES = 100;
@@ -62,12 +50,6 @@ public final class JuegoDetective {
         ganado = false;
     }
 
-    /**
-     * Pregunta si la enfermedad secreta tiene el síntoma: s ∈ X.
-     * Descuenta puntos y filtra los candidatos.
-     *
-     * @return true si el síntoma pertenece a la enfermedad secreta
-     */
     public boolean preguntar(String sintoma) {
         if (terminado) {
             throw new IllegalStateException("La partida ya terminó.");
@@ -87,11 +69,6 @@ public final class JuegoDetective {
         return pertenece;
     }
 
-    /**
-     * Intenta adivinar la enfermedad secreta.
-     *
-     * @return true si acertó; en ese caso la partida termina
-     */
     public boolean adivinar(Enfermedad propuesta) {
         if (terminado) {
             throw new IllegalStateException("La partida ya terminó.");
@@ -109,18 +86,14 @@ public final class JuegoDetective {
         return false;
     }
 
-    /** Se rinde y revela la respuesta. */
+
     public void rendirse() {
         terminado = true;
         ganado = false;
         puntos = 0;
     }
 
-    /**
-     * Pista: el síntoma no preguntado que mejor divide a los candidatos, es decir,
-     * el que minimiza max(|C ∩ con s|, |C ∩ sin s|). Devuelve null si no hay
-     * ningún síntoma que distinga a los candidatos.
-     */
+
     public String mejorPregunta() {
         String mejor = null;
         int mejorPeorCaso = Integer.MAX_VALUE;

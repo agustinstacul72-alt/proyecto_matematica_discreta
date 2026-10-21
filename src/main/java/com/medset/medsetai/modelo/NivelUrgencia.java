@@ -1,9 +1,6 @@
 package com.medset.medsetai.modelo;
 
-/**
- * Niveles de prioridad del triage, ordenados de menor a mayor.
- * El orden permite comparar niveles (relación de orden total).
- */
+
 public enum NivelUrgencia {
     BAJA("Baja", "Puede esperar; control en consulta general."),
     MEDIA("Media", "Atención en las próximas horas."),
@@ -25,7 +22,7 @@ public enum NivelUrgencia {
         return indicacion;
     }
 
-    /** Devuelve el mayor de los dos niveles. */
+
     public NivelUrgencia max(NivelUrgencia otro) {
         return this.compareTo(otro) >= 0 ? this : otro;
     }
