@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="src/main/resources/com/medset/medsetai/images/medset-logo.png" alt="Logo de MedSet" width="180">
+<img src="src/main/resources/com/medset/images/medset-logo.png" alt="Logo de MedSet" width="180">
 
 # MedSet
 
@@ -8,12 +8,12 @@
 
 Proyecto final de **Matemáticas Discretas** · Grupo 6
 
-![Java](https://img.shields.io/badge/Java-21%2B-ED8B00?logo=openjdk&logoColor=white)
-![JavaFX](https://img.shields.io/badge/JavaFX-21-1565C0)
+![Java](https://img.shields.io/badge/Java-25-ED8B00?logo=openjdk&logoColor=white)
+![JavaFX](https://img.shields.io/badge/JavaFX-25-1565C0)
 ![Maven](https://img.shields.io/badge/Maven-wrapper-C71A36?logo=apachemaven&logoColor=white)
-![Pruebas](https://img.shields.io/badge/JUnit-18%20pruebas-25A162?logo=junit5&logoColor=white)
+![Pruebas](https://img.shields.io/badge/JUnit-22%20pruebas-25A162?logo=junit5&logoColor=white)
 
-<img src="src/main/resources/com/medset/medsetai/images/jala-logo.png" alt="Jala University" width="200">
+<img src="src/main/resources/com/medset/images/jala-logo.png" alt="Jala University" width="200">
 
 </div>
 
@@ -70,11 +70,13 @@ resaltado.
 
 ### 2 · Triage
 
-Marcás los síntomas del paciente y en vivo se calculan P ∩ E, E − P, P − E y el
-índice de Jaccard con cada enfermedad. Con eso se arma un ranking y se asigna la
-urgencia con tres reglas lógicas.
+Elegís el **tipo de paciente** (niño, adulto o adulto mayor, y si tiene embarazo
+o discapacidad) y marcás sus síntomas. En vivo se calculan P ∩ E, E − P, P − E y
+el índice de Jaccard con cada enfermedad. Con eso se arma un ranking y se asigna
+la urgencia con cuatro reglas lógicas. La cuarta sube la urgencia si el paciente
+tiene síntomas de riesgo para su grupo: P ∩ G ≠ ∅, con G = G_edad ∪ G_condiciones.
 
-**Conceptos:** P ⊆ U, P ∩ R ≠ ∅, ⊆, J(P,E) = |P ∩ E| / |P ∪ E|, relaciones de orden.
+**Conceptos:** P ⊆ U, P ∩ R ≠ ∅, P ∩ G ≠ ∅, unión de conjuntos, ⊆, J(P,E) = |P ∩ E| / |P ∪ E|, relaciones de orden.
 
 | Triage | Urgencia alta |
 | :---: | :---: |
@@ -92,9 +94,24 @@ calcula la pregunta que mejor parte a C.
   <img src="docs/capturas/8_juego.png" alt="Juego detective" width="700">
 </div>
 
-## Cómo ejecutarlo
+## Descargar
 
-**Requisitos:** JDK 21 o superior (por ejemplo [Temurin](https://adoptium.net/)).
+En [Releases](https://github.com/agustinstacul72-alt/proyecto_matematica_discreta/releases/latest)
+hay instaladores listos que no necesitan Java instalado:
+
+| Sistema | Archivo |
+| --- | --- |
+| Windows | `MedSet-x.y.z.exe` o `MedSet-x.y.z.msi` |
+| macOS | `MedSet-x.y.z.pkg` |
+| Linux (Debian / Ubuntu) | `medset_x.y.z_amd64.deb` |
+
+> [!TIP]
+> En macOS, si el sistema avisa que la app es de un desarrollador no
+> identificado, abrila con clic derecho → **Abrir**.
+
+## Cómo ejecutarlo desde el código
+
+**Requisitos:** JDK 25 o superior (por ejemplo [Temurin](https://adoptium.net/)).
 Verificalo con `java -version`. No hace falta instalar Maven ni JavaFX: el
 *wrapper* `mvnw` los descarga la primera vez (se necesita internet).
 
@@ -111,8 +128,10 @@ bash ./mvnw javafx:run
 ```
 
 **Desde IntelliJ IDEA:** abrí la carpeta como proyecto Maven, esperá a que
-descargue las dependencias y ejecutá
-[`Launcher.java`](src/main/java/com/medset/medsetai/Launcher.java).
+descargue las dependencias y elegí la configuración de ejecución **MedSet**
+(arriba a la derecha, junto al botón ▶). Ya trae la opción
+`--enable-native-access=javafx.graphics`, que Java 25 necesita para que JavaFX
+arranque sin advertencias.
 
 ## Pruebas
 
@@ -120,18 +139,19 @@ descargue las dependencias y ejecutá
 bash ./mvnw test        # o .\mvnw.cmd test en Windows
 ```
 
-Hay 18 pruebas JUnit: leyes de De Morgan, no conmutatividad de la diferencia,
-principio de inclusión-exclusión, reglas de urgencia y que el juego siempre se
-puede resolver.
+Hay 22 pruebas JUnit: leyes de De Morgan, no conmutatividad de la diferencia,
+principio de inclusión-exclusión, las cuatro reglas de urgencia (incluido el tipo
+de paciente) y que el juego siempre se puede resolver.
 
 ## Estructura del proyecto
 
 ```
-src/main/java/com/medset/medsetai/
+src/main/java/com/medset/
 ├── logica/       Operaciones de conjuntos (∪ ∩ − Δ ' ⊆ ∈ |A| Jaccard)
-├── modelo/       Catálogo clínico, MotorTriage, JuegoDetective
+├── modelo/       Catálogo clínico, tipos de paciente, MotorTriage, JuegoDetective
 ├── controller/   Controladores de cada pantalla (JavaFX)
-└── ui/           Diagrama de Venn
+├── ui/           Diagrama de Venn
+└── util/         Navegación entre pantallas
 ```
 
 Documentación completa:

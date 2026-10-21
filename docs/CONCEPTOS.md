@@ -82,8 +82,32 @@ Es una relación de orden total sobre D.
 2. **Regla 2:** si P ∩ R = ∅ y la mejor coincidencia tiene J ≥ 0,5 → se usa la urgencia de esa enfermedad.
 3. **Regla 3:** en cualquier otro caso → **BAJA** (cuadro inespecífico).
 
-Las reglas se evalúan en orden, y la primera que se cumple decide. La pantalla
-muestra cuál regla se aplicó.
+Las reglas 1 a 3 se evalúan en orden, y la primera que se cumple da el nivel
+base. La pantalla muestra cuál regla se aplicó.
+
+### Tipo de paciente (Regla 4)
+
+La misma lista de síntomas no es igual de grave en todas las personas. Por eso
+cada tipo de paciente t tiene su conjunto **G_t ⊆ U** de *síntomas de riesgo*:
+
+| Tipo | Edades | G_t |
+| --- | --- | --- |
+| Niño | 0 a 12 años | {fiebre, vómito, diarrea, sarpullido} |
+| Adulto | 13 a 59 años | ∅ |
+| Adulto mayor | 60 años o más | {fiebre, vómito, diarrea, dolor abdominal} |
+| Embarazo (condición) | cualquier edad | {fiebre, dolor abdominal, dolor de cabeza, vómito} |
+| Discapacidad (condición) | cualquier edad | {fiebre, vómito, diarrea, cansancio} |
+
+Se elige un grupo de edad y se le pueden sumar condiciones. El conjunto de
+riesgo del paciente es la **unión**:
+
+G = G_edad ∪ G_condición₁ ∪ … ∪ G_condiciónₙ
+
+4. **Regla 4:** si P ∩ G ≠ ∅ y el nivel base no es ALTA → la urgencia **sube un
+   nivel** (BAJA → MEDIA, MEDIA → ALTA).
+
+Para un adulto sin condiciones G = ∅, y como P ∩ ∅ = ∅ para cualquier P, la
+Regla 4 nunca se aplica.
 
 ### Ejemplo resuelto
 
@@ -97,6 +121,11 @@ P = {fiebre, tos, dolor de cabeza, cansancio}
 
 Si se agrega «dolor de pecho», entonces P ∩ R = {dolor de pecho} ≠ ∅ y la urgencia
 pasa a **ALTA**, aunque la mejor coincidencia siga siendo de urgencia media.
+
+Si en cambio el paciente es un **niño**, G = {fiebre, vómito, diarrea, sarpullido} y
+P ∩ G = {fiebre} ≠ ∅. Se aplica la Regla 4 y la urgencia sube de MEDIA a **ALTA**.
+Si además tiene una **discapacidad**, G pasa a ser G_niño ∪ G_discapacidad y
+P ∩ G = {cansancio, fiebre}: la urgencia sigue en ALTA, porque no puede subir más.
 
 ## 4. Juego «Detective de síntomas» (Módulo 3 · `JuegoDetective`)
 

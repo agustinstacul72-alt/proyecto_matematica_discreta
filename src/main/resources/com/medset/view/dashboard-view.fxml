@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import com.medset.ui.VennDiagrama?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.medset.controller.DashboardController"
+            stylesheets="@../css/app.css"
+            prefHeight="750.0"
+            prefWidth="1200.0">
+
+    <top>
+        <HBox alignment="CENTER_LEFT" spacing="15" styleClass="dashboard-top-bar">
+            <Button text="← Inicio" onAction="#handleBackToWelcome" styleClass="secondary-button"/>
+            <Label text="Módulo 1 · Calculadora de conjuntos" styleClass="dashboard-app-title"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Label text="Funciona con números o palabras: 1, 2, 3  ó  fiebre, tos" styleClass="dashboard-status-label"/>
+        </HBox>
+    </top>
+
+    <center>
+        <ScrollPane fitToWidth="true" fitToHeight="true" styleClass="plain-scroll">
+            <StackPane styleClass="dashboard-content">
+
+                <!-- ===== PANTALLA 1: ELEGIR OPERACIÓN ===== -->
+                <VBox fx:id="selectorPanel" spacing="22" alignment="CENTER">
+                    <Label text="Elegí una operación" styleClass="panel-title"/>
+                    <Label text="Cada operación muestra su definición formal, su cardinalidad y su diagrama de Venn."
+                           styleClass="panel-description"/>
+
+                    <HBox spacing="18" alignment="CENTER">
+                        <Button onAction="#elegirUnion" styleClass="op-card">
+                            <graphic><VBox alignment="CENTER" spacing="6">
+                                <Label text="∪" styleClass="op-symbol"/>
+                                <Label text="Unión" styleClass="op-name"/>
+                            </VBox></graphic>
+                        </Button>
+                        <Button onAction="#elegirInterseccion" styleClass="op-card">
+                            <graphic><VBox alignment="CENTER" spacing="6">
+                                <Label text="∩" styleClass="op-symbol"/>
+                                <Label text="Intersección" styleClass="op-name"/>
+                            </VBox></graphic>
+                        </Button>
+                        <Button onAction="#elegirDiferencia" styleClass="op-card">
+                            <graphic><VBox alignment="CENTER" spacing="6">
+                                <Label text="−" styleClass="op-symbol"/>
+                                <Label text="Diferencia" styleClass="op-name"/>
+                            </VBox></graphic>
+                        </Button>
+                    </HBox>
+                    <HBox spacing="18" alignment="CENTER">
+                        <Button onAction="#elegirSimetrica" styleClass="op-card">
+                            <graphic><VBox alignment="CENTER" spacing="6">
+                                <Label text="Δ" styleClass="op-symbol"/>
+                                <Label text="Dif. simétrica" styleClass="op-name"/>
+                            </VBox></graphic>
+                        </Button>
+                        <Button onAction="#elegirSubconjunto" styleClass="op-card">
+                            <graphic><VBox alignment="CENTER" spacing="6">
+                                <Label text="⊆" styleClass="op-symbol"/>
+                                <Label text="Subconjunto" styleClass="op-name"/>
+                            </VBox></graphic>
+                        </Button>
+                        <Button onAction="#elegirComplemento" styleClass="op-card">
+                            <graphic><VBox alignment="CENTER" spacing="6">
+                                <Label text="A'" styleClass="op-symbol"/>
+                                <Label text="Complemento" styleClass="op-name"/>
+                            </VBox></graphic>
+                        </Button>
+                    </HBox>
+                </VBox>
+
+                <!-- ===== PANTALLA 2: INGRESAR CONJUNTOS ===== -->
+                <HBox fx:id="inputPanel" spacing="28" alignment="CENTER"
+                      visible="false" managed="false">
+
+                    <VBox spacing="10" prefWidth="430" maxWidth="430" styleClass="calc-form">
+                        <HBox spacing="10" alignment="CENTER_LEFT">
+                            <Button text="← Operaciones" onAction="#volverAlSelector" styleClass="small-button"/>
+                            <Button text="Cargar ejemplo" onAction="#cargarEjemplo" styleClass="small-button"/>
+                        </HBox>
+
+                        <Label fx:id="operacionLabel" styleClass="section-title"/>
+                        <Label fx:id="definicionLabel" wrapText="true" styleClass="definition-text"/>
+
+                        <Label text="Conjunto A" styleClass="field-label"/>
+                        <TextField fx:id="conjuntoAField" promptText="Ej: 1, 2, 3, 4" styleClass="form-input"/>
+
+                        <VBox fx:id="campoB" spacing="10">
+                            <Label text="Conjunto B" styleClass="field-label"/>
+                            <TextField fx:id="conjuntoBField" promptText="Ej: 3, 4, 5" styleClass="form-input"/>
+                        </VBox>
+
+                        <VBox fx:id="campoU" spacing="10" visible="false" managed="false">
+                            <Label text="Universo U" styleClass="field-label"/>
+                            <TextField fx:id="universoField" promptText="Ej: 1, 2, 3, 4, 5, 6, 7, 8" styleClass="form-input"/>
+                        </VBox>
+
+                        <Button text="Calcular" onAction="#handleCalcular" styleClass="primary-button" maxWidth="Infinity"/>
+
+                        <Label fx:id="resultadoLabel" wrapText="true" styleClass="result-text"/>
+                        <Label fx:id="detalleLabel" wrapText="true" styleClass="detail-text"/>
+                    </VBox>
+
+                    <VBox spacing="10" alignment="TOP_CENTER">
+                        <Label text="Diagrama de Venn" styleClass="field-label"/>
+                        <VennDiagrama fx:id="venn"/>
+                        <Label text="La zona azul es el resultado. En ⊆, la zona roja muestra los contraejemplos."
+                               styleClass="panel-description" wrapText="true" maxWidth="560"/>
+                    </VBox>
+                </HBox>
+
+            </StackPane>
+        </ScrollPane>
+    </center>
+
+</BorderPane>
