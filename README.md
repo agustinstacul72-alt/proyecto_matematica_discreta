@@ -13,6 +13,8 @@ Proyecto final de **Matemáticas Discretas** · Grupo 6
 ![Maven](https://img.shields.io/badge/Maven-wrapper-C71A36?logo=apachemaven&logoColor=white)
 ![Pruebas](https://img.shields.io/badge/JUnit-26%20pruebas-25A162?logo=junit5&logoColor=white)
 
+### [🌐 Abrir MedSet en el navegador](https://jdswe.github.io/medset/) · [⬇️ Descargar para escritorio](https://github.com/agustinstacul72-alt/proyecto_matematica_discreta/releases/latest)
+
 <img src="src/main/resources/com/medset/images/jala-logo.png" alt="Jala University" width="200">
 
 </div>
@@ -98,7 +100,7 @@ calcula la pregunta que mejor parte a C.
 
 MedSet también funciona en la web, sin instalar nada y desde el celular:
 
-**https://agustinstacul72-alt.github.io/proyecto_matematica_discreta/**
+**https://jdswe.github.io/medset/**
 
 La versión web usa **el mismo código Java** de la app de escritorio (`logica/`
 y `modelo/`), compilado a JavaScript con [TeaVM](https://teavm.org/). Por eso
