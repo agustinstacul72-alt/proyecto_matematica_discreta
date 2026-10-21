@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<StackPane xmlns="http://javafx.com/javafx/21"
+           xmlns:fx="http://javafx.com/fxml/1"
+           fx:controller="com.medset.controller.WelcomeController"
+           stylesheets="@../css/app.css"
+           styleClass="welcome-root">
+
+    <VBox alignment="CENTER" spacing="18" maxWidth="1050" styleClass="welcome-container">
+
+        <HBox alignment="CENTER" spacing="30">
+            <ImageView fitWidth="110" fitHeight="110" preserveRatio="true">
+                <image><Image url="@../images/medset-logo.png"/></image>
+            </ImageView>
+            <ImageView fitWidth="190" fitHeight="110" preserveRatio="true">
+                <image><Image url="@../images/jala-logo.png"/></image>
+            </ImageView>
+        </HBox>
+
+        <Label text="MedSet" styleClass="welcome-title"/>
+        <Label text="Teoría de conjuntos aplicada al triage de síntomas"
+               wrapText="true" textAlignment="CENTER" styleClass="welcome-tagline"/>
+        <Label text="Un paciente es un conjunto P de síntomas, una enfermedad es un conjunto E y todo vive dentro del universo U."
+               wrapText="true" maxWidth="760" minHeight="-Infinity" textAlignment="CENTER" styleClass="welcome-subtitle"/>
+
+        <HBox alignment="CENTER" spacing="20">
+            <Button onAction="#handleStart" styleClass="module-card">
+                <graphic><VBox spacing="6">
+                    <Label text="1 · Calculadora" styleClass="module-title"/>
+                    <Label text="∪  ∩  −  Δ  ⊆  A'" styleClass="module-symbols"/>
+                    <Label text="Operaciones con definición formal, cardinalidad y diagrama de Venn."
+                           wrapText="true" styleClass="module-desc"/>
+                </VBox></graphic>
+            </Button>
+            <Button onAction="#handleLaboratorio" styleClass="module-card">
+                <graphic><VBox spacing="6">
+                    <Label text="2 · Triage" styleClass="module-title"/>
+                    <Label text="P ∩ E   J(P, E)" styleClass="module-symbols"/>
+                    <Label text="Marcá síntomas y el sistema ordena enfermedades y asigna la urgencia."
+                           wrapText="true" styleClass="module-desc"/>
+                </VBox></graphic>
+            </Button>
+            <Button onAction="#handleJuego" styleClass="module-card">
+                <graphic><VBox spacing="6">
+                    <Label text="3 · Juego detective" styleClass="module-title"/>
+                    <Label text="¿s ∈ X?" styleClass="module-symbols"/>
+                    <Label text="Descubrí la enfermedad secreta con la menor cantidad de preguntas."
+                           wrapText="true" styleClass="module-desc"/>
+                </VBox></graphic>
+            </Button>
+        </HBox>
+
+        <Button text="Integrantes" onAction="#handleCredits" styleClass="secondary-button"/>
+        <Label text="Proyecto educativo de Matemáticas Discretas · Grupo 6 · No reemplaza una consulta médica."
+               styleClass="welcome-disclaimer"/>
+    </VBox>
+
+</StackPane>

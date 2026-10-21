@@ -1,10 +1,10 @@
 MIT License
 
-Copyright (c) 2026 MedSet AI contributors
+Copyright (c) 2026 MedSet contributors
 
 Unless otherwise noted, the source code and documentation in this project are
 licensed under the MIT License below. The image files in
-`src/main/resources/com/medset/medsetai/images/` are excluded from this license
+`src/main/resources/com/medset/images/` are excluded from this license
 and remain subject to the rights of their respective owners.
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
