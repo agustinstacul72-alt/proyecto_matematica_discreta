@@ -130,8 +130,13 @@ web/
 ```
 
 `bash ./mvnw -f web/pom.xml package` deja el sitio en `web/target/sitio`. El
-workflow `.github/workflows/pages.yml` corre las pruebas, arma el sitio y lo
-publica en GitHub Pages cada vez que se actualiza `main`.
+workflow `.github/workflows/web.yml` comprueba en cada pull request que la web
+siga compilando.
+
+La web se publica desde el repositorio [`jdswe/medset`](https://github.com/jdswe/medset)
+en **https://jdswe.github.io/medset/**. Su workflow baja este repositorio, corre
+las pruebas, compila la web y la sube a GitHub Pages. Se ejecuta todos los días;
+para publicar al momento: *Actions → Publicar MedSet Web → Run workflow* en ese repositorio.
 
 ## Flujo Git del equipo
 
