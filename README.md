@@ -19,6 +19,17 @@ Proyecto final de **Matemáticas Discretas** · Grupo 6
 
 ---
 
+## Equipo · Grupo 6
+
+- Daniel Tueros Cueva
+- Brisa Abigail Alvarez
+- Stacul Dario Agustin
+- Dayana Lucia Posada Narváez
+- Agustin Tomas Gammuto
+- Jose David Carranza Angarita
+
+**Profesor:** Rafael Pastor Martínez Vargas
+
 ## ¿Qué es MedSet?
 
 MedSet modela un problema real, la clasificación inicial (**triage**) de
@@ -127,17 +138,6 @@ Documentación completa:
 
 - [`docs/CONCEPTOS.md`](docs/CONCEPTOS.md): la matemática del proyecto, con ejemplos.
 - [`docs/ARQUITECTURA.md`](docs/ARQUITECTURA.md): cómo está organizado el código.
-
-## Equipo · Grupo 6
-
-- Daniel Tueros Cueva
-- Brisa Abigail Alvarez
-- Stacul Dario Agustin
-- Dayana Lucia Posada Narváez
-- Agustin Tomas Gammuto
-- Jose David Carranza Angarita
-
-**Profesor:** Rafael Pastor Martínez Vargas
 
 <div align="center">
   <sub>Jala University · Matemáticas Discretas</sub>
