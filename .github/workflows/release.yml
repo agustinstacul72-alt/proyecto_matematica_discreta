@@ -74,6 +74,15 @@ jobs:
         run: |
           cp target/medset-*.jar target/package-input/medset.jar
 
+      - name: Choose application icon
+        shell: bash
+        run: |
+          case "$RUNNER_OS" in
+            Windows) echo "APP_ICON=src/main/packaging/medset.ico" >> "$GITHUB_ENV" ;;
+            macOS) echo "APP_ICON=src/main/packaging/medset.icns" >> "$GITHUB_ENV" ;;
+            *) echo "APP_ICON=src/main/packaging/medset.png" >> "$GITHUB_ENV" ;;
+          esac
+
       - name: Create and smoke-test native application image
         shell: bash
         run: |
@@ -81,6 +90,7 @@ jobs:
             --module-path target/package-input \
             --module com.medset/com.medset.Launcher \
             --java-options "--enable-native-access=javafx.graphics" \
+            --icon "$APP_ICON" \
             --dest target/app-image
           if [[ "$RUNNER_OS" == "Windows" ]]; then
             target/app-image/MedSet/MedSet.exe --smoke-test
@@ -108,12 +118,16 @@ jobs:
             --module-path target/package-input
             --module com.medset/com.medset.Launcher
             --java-options "--enable-native-access=javafx.graphics"
+            --icon "$APP_ICON"
             --app-version "$APP_VERSION"
             --vendor "MedSet - Grupo 6"
+            --description "Teoría de conjuntos aplicada al triage de síntomas"
             --dest target/installers
           )
           if [[ "$RUNNER_OS" == "Windows" ]]; then
             args+=(--win-menu --win-shortcut --win-per-user-install)
+          elif [[ "$RUNNER_OS" == "Linux" ]]; then
+            args+=(--linux-shortcut --linux-menu-group Education)
           fi
           jpackage "${args[@]}"
 
@@ -160,6 +174,8 @@ jobs:
       - name: Install and smoke-test Linux package
         if: runner.os == 'Linux'
         run: |
+          # The runner has no desktop; create the menu folders a desktop install already has.
+          sudo mkdir -p /etc/xdg/menus /usr/share/applications /usr/share/desktop-directories
           sudo apt-get install --yes ./target/installers/*.deb
           xvfb-run --auto-servernum /opt/medset/bin/MedSet --smoke-test
 

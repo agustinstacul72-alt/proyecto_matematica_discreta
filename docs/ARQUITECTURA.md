@@ -84,6 +84,10 @@ los modos de ejecución:
 | Instaladores | `--java-options` de `jpackage` en los workflows |
 | Maven (su propia consola) | `.mvn/jvm.config` |
 
+Los íconos de los instaladores están en `src/main/packaging/`: `medset.ico`
+(Windows), `medset.icns` (macOS) y `medset.png` (Linux). La ventana usa
+`images/medset-icon.png`.
+
 ```text
 bash ./mvnw test        Ejecuta las pruebas
 bash ./mvnw javafx:run  Ejecuta la aplicación
