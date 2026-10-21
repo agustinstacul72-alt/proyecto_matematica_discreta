@@ -8,17 +8,10 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 
-/**
- * Configures and displays the primary MedSet AI window.
- */
+
 public class MedSetApplication extends Application {
 
-    /**
-     * Loads the welcome view and displays the application stage.
-     *
-     * @param stage primary JavaFX window
-     * @throws IOException if the welcome FXML resource cannot be loaded
-     */
+
     @Override
     public void start(Stage stage) throws IOException {
 
@@ -27,9 +20,9 @@ public class MedSetApplication extends Application {
             FXMLLoader.load(MedSetApplication.class.getResource(
                     "/com/medset/medsetai/view/dashboard-view.fxml"
             ));
-            FXMLLoader.load(MedSetApplication.class.getResource(
-                    "/com/medset/medsetai/view/credits-view.fxml"
-            ));
+            for (String vista : new String[]{"credits-view.fxml", "laboratorio-view.fxml", "juego-view.fxml"}) {
+                FXMLLoader.load(MedSetApplication.class.getResource("/com/medset/medsetai/view/" + vista));
+            }
         }
 
         FXMLLoader loader = new FXMLLoader(
@@ -40,7 +33,7 @@ public class MedSetApplication extends Application {
 
         Scene scene = new Scene(loader.load(), 1200, 750);
 
-        stage.setTitle("MedSet AI");
+        stage.setTitle("MedSet · Teoría de conjuntos aplicada al triage");
         stage.setScene(scene);
         stage.setMinWidth(1000);
         stage.setMinHeight(650);

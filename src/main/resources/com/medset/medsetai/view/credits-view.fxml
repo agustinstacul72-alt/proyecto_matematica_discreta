@@ -29,7 +29,7 @@
             </image>
         </ImageView>
 
-        <Label text="Matematicas Discretas"
+        <Label text="Matemáticas Discretas"
                styleClass="credits-course"/>
 
         <HBox alignment="CENTER"
@@ -86,7 +86,7 @@
         </VBox>
 
         <!-- Close -->
-        <Button text="Close"
+        <Button text="Volver"
                 onAction="#handleClose"
                 styleClass="secondary-button"/>
 

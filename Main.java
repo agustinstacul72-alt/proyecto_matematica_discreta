@@ -1,11 +1,11 @@
 /**
- * Compatibility entry point that delegates to the JavaFX application launcher.
+ * Punto de entrada alternativo: delega en {@link com.medset.medsetai.Launcher}.
  */
 public class Main {
     /**
-     * Starts MedSet AI.
+     * Inicia MedSet.
      *
-     * @param args command-line arguments forwarded to JavaFX
+     * @param args argumentos que se pasan a JavaFX
      */
     public static void main(String[] args) {
         com.medset.medsetai.Launcher.main(args);

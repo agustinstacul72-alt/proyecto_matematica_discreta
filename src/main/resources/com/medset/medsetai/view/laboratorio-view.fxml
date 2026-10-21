@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+<?import com.medset.medsetai.ui.VennDiagrama?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.medset.medsetai.controller.LaboratorioController"
+            stylesheets="@../css/app.css"
+            prefHeight="750.0"
+            prefWidth="1200.0">
+
+    <top>
+        <HBox alignment="CENTER_LEFT" spacing="15" styleClass="dashboard-top-bar">
+            <Button text="← Inicio" onAction="#volverAlInicio" styleClass="secondary-button"/>
+            <Label text="Módulo 2 · Triage con conjuntos" styleClass="dashboard-app-title"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Label text="Herramienta educativa: no reemplaza una consulta médica." styleClass="dashboard-status-label"/>
+        </HBox>
+    </top>
+
+    <left>
+        <ScrollPane fitToWidth="true" prefWidth="430" styleClass="plain-scroll">
+            <VBox spacing="12" styleClass="lab-left">
+                <Label text="Síntomas del paciente (P)" styleClass="section-title"/>
+                <Label text="Tocá los síntomas que presenta el paciente. Cada uno es un elemento del universo U."
+                       wrapText="true" styleClass="panel-description"/>
+                <FlowPane fx:id="sintomasPane" hgap="8" vgap="8" prefWrapLength="380"/>
+                <HBox spacing="10">
+                    <Button text="Paciente de ejemplo" onAction="#pacienteEjemplo" styleClass="small-button"/>
+                    <Button text="Limpiar" onAction="#limpiar" styleClass="small-button"/>
+                </HBox>
+                <Label fx:id="pLabel" wrapText="true" styleClass="set-text"/>
+                <Label fx:id="complementoLabel" wrapText="true" styleClass="detail-text"/>
+                <Label fx:id="alarmaLabel" wrapText="true" styleClass="detail-text"/>
+            </VBox>
+        </ScrollPane>
+    </left>
+
+    <center>
+        <ScrollPane fitToWidth="true" styleClass="plain-scroll">
+            <VBox spacing="14" styleClass="dashboard-content">
+                <HBox spacing="14" alignment="CENTER_LEFT">
+                    <Label fx:id="urgenciaBadge" styleClass="badge"/>
+                    <Label fx:id="urgenciaTexto" wrapText="true" HBox.hgrow="ALWAYS" maxWidth="Infinity"
+                           styleClass="detail-text"/>
+                </HBox>
+                <Label fx:id="reglaLabel" wrapText="true" styleClass="rule-text"/>
+
+                <Label fx:id="vennTitulo" styleClass="field-label"/>
+                <VennDiagrama fx:id="venn"/>
+
+                <Label text="Ranking de enfermedades (de mayor a menor similitud de Jaccard)" styleClass="field-label"/>
+                <Label text="J(P, E) = |P ∩ E| / |P ∪ E|. Tocá una tarjeta para verla en el diagrama de Venn."
+                       wrapText="true" styleClass="panel-description"/>
+                <VBox fx:id="rankingBox" spacing="10"/>
+            </VBox>
+        </ScrollPane>
+    </center>
+
+</BorderPane>
