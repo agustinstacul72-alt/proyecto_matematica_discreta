@@ -174,7 +174,10 @@ jobs:
       - name: Install and smoke-test Linux package
         if: runner.os == 'Linux'
         run: |
+          # The runner has no desktop; create the menu folders a desktop install already has.
+          sudo mkdir -p /etc/xdg/menus /usr/share/applications /usr/share/desktop-directories
           sudo apt-get install --yes ./target/installers/*.deb
+          ls /usr/share/applications | grep -i medset
           xvfb-run --auto-servernum /opt/medset/bin/MedSet --smoke-test
 
       - name: Install and smoke-test macOS package
