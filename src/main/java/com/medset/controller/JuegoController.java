@@ -4,6 +4,7 @@ import com.medset.logica.FormatoConjunto;
 import com.medset.modelo.CatalogoClinico;
 import com.medset.modelo.Enfermedad;
 import com.medset.modelo.JuegoDetective;
+import com.medset.modelo.TextosJuego;
 import com.medset.util.SceneManager;
 import com.medset.util.Vista;
 import javafx.event.ActionEvent;
@@ -18,7 +19,6 @@ import javafx.scene.layout.VBox;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class JuegoController {
 
@@ -50,8 +50,8 @@ public class JuegoController {
     private void nuevaRonda() {
         juego.nuevaPartida();
         registroBox.getChildren().clear();
-        registrar("Inicio: C = D (las " + juego.candidatos().size() + " enfermedades del catálogo).");
-        mensaje("Elegí un síntoma para preguntar.");
+        registrar(TextosJuego.registroInicio(juego));
+        mensaje(TextosJuego.MENSAJE_INICIAL);
 
         preguntasPane.getChildren().clear();
         for (String sintoma : CatalogoClinico.UNIVERSO) {
@@ -71,20 +71,11 @@ public class JuegoController {
         boolean si = juego.preguntar(sintoma);
         boton.setDisable(true);
         boton.getStyleClass().add(si ? "chip-si" : "chip-no");
-        boton.setText(sintoma + (si ? "  ✓" : "  ✗"));
+        boton.setText(TextosJuego.botonPreguntado(sintoma, si));
 
         List<Enfermedad> candidatos = juego.candidatos();
-        String relacion = si ? "∈" : "∉";
-        registrar("¿" + sintoma + " ∈ X?  " + (si ? "Sí" : "No") + ".  C ← { E ∈ C | " + sintoma + " " + relacion
-                + " E }  →  |C| pasó de " + antes + " a " + candidatos.size()
-                + "  = " + nombres(candidatos));
-
-        String respuesta = si ? "Sí, la enfermedad secreta tiene «" + sintoma + "»."
-                : "No, la enfermedad secreta no tiene «" + sintoma + "».";
-        if (candidatos.size() == 1) {
-            respuesta += " Solo queda un candidato: ¡adiviná!";
-        }
-        mensajeLabel.setText(respuesta);
+        registrar(TextosJuego.registroPregunta(sintoma, si, antes, candidatos));
+        mensajeLabel.setText(TextosJuego.respuestaPregunta(sintoma, si, candidatos));
         refrescar();
     }
 
@@ -95,15 +86,14 @@ public class JuegoController {
         if (juego.adivinar(e)) {
             puntajeTotal += juego.puntos();
             rondas++;
-            registrar("Adivinaste X = " + e.nombre() + ".  X = " + FormatoConjunto.formatear(e.sintomas()));
-            mensaje("¡Correcto! Era " + e.nombre() + ". Ganaste " + juego.puntos() + " puntos.", "game-win");
+            registrar(TextosJuego.registroAcierto(e));
+            mensaje(TextosJuego.mensajeAcierto(e, juego.puntos()), "game-win");
         } else {
-            registrar("Intentaste " + e.nombre() + ": incorrecto (−" + JuegoDetective.COSTO_ERROR
-                    + "). Se quita de C.");
+            registrar(TextosJuego.registroError(e));
             if (juego.terminado()) {
-                terminarPerdiendo("Te quedaste sin puntos.");
+                terminarPerdiendo(TextosJuego.SIN_PUNTOS);
             } else {
-                mensajeLabel.setText("No es " + e.nombre() + ". Seguí investigando.");
+                mensajeLabel.setText(TextosJuego.mensajeError(e));
             }
         }
         refrescar();
@@ -114,16 +104,7 @@ public class JuegoController {
         if (juego.terminado()) {
             return;
         }
-        String mejor = juego.mejorPregunta();
-        if (mejor == null) {
-            mensajeLabel.setText("Pista: ya no hace falta preguntar; solo queda "
-                    + nombres(juego.candidatos()) + ".");
-            return;
-        }
-        int con = juego.candidatosCon(mejor);
-        int sin = juego.candidatos().size() - con;
-        mensajeLabel.setText("Pista: preguntá por «" + mejor + "». Divide a C en " + con + " candidatos que lo tienen y "
-                + sin + " que no, así que en el peor caso te quedan " + Math.max(con, sin) + ".");
+        mensajeLabel.setText(TextosJuego.pista(juego));
     }
 
     @FXML
@@ -133,21 +114,21 @@ public class JuegoController {
         }
         juego.rendirse();
         rondas++;
-        terminarPerdiendo("Te rendiste.");
+        terminarPerdiendo(TextosJuego.RENDICION);
         refrescar();
     }
 
     private void terminarPerdiendo(String motivo) {
         Enfermedad x = juego.secreta();
-        mensaje(motivo + " La enfermedad secreta era " + x.nombre() + ".", "game-lose");
-        registrar("Respuesta: X = " + x.nombre() + " = " + FormatoConjunto.formatear(x.sintomas()));
+        mensaje(TextosJuego.mensajeDerrota(motivo, x), "game-lose");
+        registrar(TextosJuego.registroRespuesta(x));
     }
 
     private void refrescar() {
         boolean terminado = juego.terminado();
-        puntosLabel.setText("Puntos de la ronda: " + juego.puntos());
-        totalLabel.setText("Total: " + puntajeTotal + " pts en " + rondas + " rondas");
-        candidatosTitulo.setText("Candidatos C   (|C| = " + juego.candidatos().size() + ")");
+        puntosLabel.setText(TextosJuego.puntos(juego));
+        totalLabel.setText(TextosJuego.total(puntajeTotal, rondas));
+        candidatosTitulo.setText(TextosJuego.tituloCandidatos(juego));
         pistaButton.setDisable(terminado);
         rendirseButton.setDisable(terminado);
         if (terminado) {
@@ -196,16 +177,9 @@ public class JuegoController {
     }
 
     private void registrar(String linea) {
-        Label l = new Label((registroBox.getChildren().size() + 1) + ". " + linea);
+        Label l = new Label(TextosJuego.lineaRegistro(registroBox.getChildren().size() + 1, linea));
         l.setWrapText(true);
         l.getStyleClass().add("log-line");
         registroBox.getChildren().add(l);
-    }
-
-    private static String nombres(List<Enfermedad> lista) {
-        if (lista.isEmpty()) {
-            return "∅";
-        }
-        return lista.stream().map(Enfermedad::nombre).collect(Collectors.joining(", ", "{", "}"));
     }
 }

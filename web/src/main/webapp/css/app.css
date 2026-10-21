@@ -1,0 +1,370 @@
+/* Estilos de MedSet Web: los mismos colores, tamaños y bordes que css/app.css de la app de escritorio. */
+
+:root {
+    --azul: #2563EB;
+    --azul-oscuro: #1D4ED8;
+    --azul-suave: #EFF6FF;
+    --texto: #0F172A;
+    --texto-2: #334155;
+    --texto-3: #475569;
+    --gris: #64748B;
+    --gris-claro: #94A3B8;
+    --borde: #CBD5E1;
+    --borde-suave: #E2E8F0;
+    --fondo: #F8FAFC;
+    --fondo-2: #F1F5F9;
+    --rojo: #DC2626;
+    --verde: #16A34A;
+    --naranja: #D97706;
+    --fuente: "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Roboto, Arial, sans-serif;
+    --mono: Consolas, Menlo, "DejaVu Sans Mono", monospace;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+    margin: 0;
+    min-height: 100%;
+    background: var(--fondo);
+    color: var(--texto);
+    font-family: var(--fuente);
+    -webkit-font-smoothing: antialiased;
+}
+
+button { font-family: inherit; }
+
+.oculto { display: none !important; }
+
+/* ===== Botones ===== */
+
+.primary-button, .secondary-button, .small-button {
+    font-weight: 600;
+    cursor: pointer;
+    border-radius: 10px;
+    transition: background-color .12s, border-color .12s;
+}
+
+.primary-button {
+    background: var(--azul);
+    color: white;
+    font-size: 16px;
+    padding: 13px 28px;
+    border: 0;
+}
+.primary-button:hover { background: var(--azul-oscuro); }
+
+.secondary-button {
+    background: white;
+    color: var(--texto);
+    font-size: 16px;
+    padding: 13px 28px;
+    border: 1px solid var(--borde);
+}
+.secondary-button:hover { background: var(--fondo-2); }
+
+.small-button {
+    background: white;
+    color: var(--texto);
+    font-size: 13px;
+    padding: 7px 14px;
+    border: 1px solid var(--borde);
+    border-radius: 8px;
+}
+.small-button:hover { background: var(--fondo-2); }
+
+button:disabled { opacity: .4; cursor: default; }
+button:focus-visible { outline: 3px solid #93C5FD; outline-offset: 2px; }
+
+/* ===== Inicio ===== */
+
+.welcome {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 18px;
+    padding: 50px 16px;
+    text-align: center;
+}
+
+.welcome-logos { display: flex; align-items: center; gap: 30px; }
+.welcome-logos img:first-child { width: 110px; height: 110px; object-fit: contain; }
+.welcome-logos img:last-child { width: 190px; height: 110px; object-fit: contain; }
+
+.welcome-title { margin: 0; font-size: 52px; font-weight: 700; }
+.welcome-tagline { margin: 0; font-size: 16px; font-weight: 600; color: var(--azul); }
+.welcome-subtitle { margin: 0; max-width: 760px; font-size: 18px; color: var(--gris); }
+.welcome-disclaimer { font-size: 12px; color: var(--gris-claro); }
+
+.modules { display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; }
+
+.module-card {
+    width: 300px;
+    min-height: 160px;
+    padding: 18px;
+    text-align: left;
+    background: white;
+    border: 2px solid var(--borde);
+    border-radius: 14px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+.module-card:hover { border-color: var(--azul); background: var(--azul-suave); }
+.module-title { font-size: 19px; font-weight: 700; color: var(--texto); }
+.module-symbols { font-size: 22px; font-weight: 700; color: var(--azul); }
+.module-desc { font-size: 13px; color: var(--texto-3); }
+
+/* ===== Créditos ===== */
+
+.credits {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 35px 16px 40px;
+    text-align: center;
+}
+.credits-logo { width: 300px; max-width: 80vw; }
+.credits-course { font-size: 19px; font-weight: 600; color: var(--azul); }
+.credits-group { font-size: 13px; color: var(--gris); padding: 2px 0 8px; }
+.credits-group b { font-size: 14px; color: var(--azul); margin-left: 8px; }
+.credits-section { display: flex; flex-direction: column; gap: 5px; padding: 8px 0 5px; }
+.credits-heading { font-size: 11px; font-weight: 700; color: var(--gris); letter-spacing: 1px; }
+.credits-professor { font-size: 17px; font-weight: 600; }
+.credits-student { font-size: 14px; color: var(--texto-2); }
+
+/* ===== Barra superior de los módulos ===== */
+
+.top-bar {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px 15px;
+    padding: 15px 25px;
+    background: white;
+    border-bottom: 1px solid var(--borde-suave);
+}
+.top-bar-title { font-size: 20px; font-weight: 700; margin: 0; }
+.top-bar-space { flex: 1; }
+.top-bar-status { font-size: 12px; color: var(--gris-claro); }
+.score { font-size: 16px; font-weight: 700; color: var(--azul-oscuro); }
+
+/* ===== Contenido compartido ===== */
+
+.content { padding: 35px; }
+
+.panel-title { font-size: 30px; font-weight: 700; margin: 0; }
+.panel-description { font-size: 14px; color: var(--gris); margin: 0; }
+.section-title { font-size: 24px; font-weight: 700; margin: 0; }
+.field-label { font-size: 16px; font-weight: 600; color: var(--texto-2); }
+.detail-text { font-size: 14px; color: var(--texto-2); white-space: pre-line; margin: 0; }
+.set-text { font-size: 15px; font-weight: 600; color: var(--azul-oscuro); white-space: pre-line; margin: 0; }
+.result-text { font-size: 20px; font-weight: 700; color: var(--azul-oscuro); white-space: pre-line; margin: 0; overflow-wrap: anywhere; }
+
+.definition-text {
+    font-size: 14px;
+    color: #1E3A8A;
+    background: var(--azul-suave);
+    border-radius: 8px;
+    padding: 10px;
+    margin: 0;
+}
+
+.rule-text {
+    font-size: 14px;
+    background: white;
+    border: 1px solid var(--borde-suave);
+    border-radius: 8px;
+    padding: 10px 12px;
+    white-space: pre-line;
+    margin: 0;
+}
+
+.stack { display: flex; flex-direction: column; }
+.gap-10 { gap: 10px; }
+.gap-12 { gap: 12px; }
+.gap-14 { gap: 14px; }
+.row { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+
+/* Dos columnas: panel blanco a la izquierda y contenido a la derecha. */
+.split { display: grid; grid-template-columns: 430px minmax(0, 1fr); min-height: calc(100vh - 80px); }
+.split-juego { grid-template-columns: 380px minmax(0, 1fr); }
+.lab-left { background: white; padding: 25px; }
+
+@media (max-width: 900px) {
+    .split, .split-juego { grid-template-columns: minmax(0, 1fr); min-height: 0; }
+    .content { padding: 20px 16px; }
+    .lab-left { padding: 20px 16px; }
+    .top-bar { padding: 12px 16px; }
+}
+
+/* ===== Calculadora ===== */
+
+.selector { display: flex; flex-direction: column; align-items: center; gap: 22px; text-align: center; padding: 20px 0; }
+.ops { display: grid; grid-template-columns: repeat(3, 170px); gap: 18px; justify-content: center; }
+
+.op-card {
+    height: 150px;
+    background: white;
+    border: 2px solid var(--borde);
+    border-radius: 14px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+}
+.op-card:hover { border-color: var(--azul); background: var(--azul-suave); }
+.op-symbol { font-size: 54px; font-weight: 700; color: var(--azul); line-height: 1.1; }
+.op-name { font-size: 15px; font-weight: 600; color: var(--texto-2); }
+
+@media (max-width: 600px) {
+    .ops { grid-template-columns: repeat(2, minmax(0, 150px)); }
+    .welcome-title { font-size: 40px; }
+}
+
+.calc { display: flex; flex-wrap: wrap; justify-content: center; align-items: flex-start; gap: 28px; }
+
+.calc-form {
+    width: 430px;
+    max-width: 100%;
+    background: white;
+    padding: 30px;
+    border: 1px solid var(--borde-suave);
+    border-radius: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.form-input {
+    font: inherit;
+    font-size: 17px;
+    width: 100%;
+    background: var(--fondo);
+    border: 1px solid var(--borde);
+    border-radius: 8px;
+    padding: 12px;
+    color: var(--texto);
+}
+.form-input:focus { outline: 2px solid var(--azul); outline-offset: -1px; background: white; }
+
+.calc-venn { display: flex; flex-direction: column; align-items: center; gap: 10px; width: 560px; max-width: 100%; }
+
+/* ===== Chips (síntomas, tipo de paciente, preguntas) ===== */
+
+.chip {
+    background: var(--fondo-2);
+    color: var(--texto);
+    font-size: 13px;
+    padding: 7px 12px;
+    border: 1px solid var(--borde);
+    border-radius: 16px;
+    cursor: pointer;
+}
+.chip:hover { border-color: var(--azul); }
+.chip.seleccionado { background: var(--azul); color: white; border-color: var(--azul); }
+.chip-alarma { border-color: #F87171; }
+.chip-alarma.seleccionado { background: var(--rojo); border-color: var(--rojo); }
+.chip-si, .chip-si:disabled { background: #DCFCE7; border-color: var(--verde); opacity: 1; }
+.chip-no, .chip-no:disabled { background: #FEE2E2; border-color: var(--rojo); opacity: 1; }
+
+/* ===== Urgencia y tarjetas ===== */
+
+.badge {
+    display: inline-block;
+    font-size: 15px;
+    font-weight: 700;
+    color: white;
+    padding: 8px 16px;
+    border-radius: 20px;
+    white-space: nowrap;
+}
+.badge-alta { background: var(--rojo); }
+.badge-media { background: var(--naranja); }
+.badge-baja { background: var(--verde); }
+.badge-neutral { background: var(--gris-claro); }
+
+.rank-card {
+    background: white;
+    border: 1px solid var(--borde-suave);
+    border-radius: 10px;
+    padding: 12px 14px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    text-align: left;
+    width: 100%;
+    font: inherit;
+    color: inherit;
+}
+.rank-card:hover { border-color: #93C5FD; }
+.rank-card-selected { border: 2px solid var(--azul); background: var(--azul-suave); padding: 11px 13px; }
+.rank-card-selected:hover { border-color: var(--azul); }
+.rank-card-out { opacity: .35; }
+.rank-card-dim { opacity: .6; }
+
+.card-head { display: flex; align-items: center; gap: 12px; }
+.card-title { font-size: 15px; font-weight: 700; flex: 1; }
+.card-pct { font-size: 14px; font-weight: 700; color: var(--azul-oscuro); min-width: 70px; }
+.card-detail { font-size: 13px; color: var(--texto-3); white-space: pre-line; margin: 0; }
+
+.jaccard-bar { width: 220px; max-width: 35%; height: 18px; background: var(--borde-suave); border-radius: 4px; overflow: hidden; flex-shrink: 0; }
+.jaccard-bar > span { display: block; height: 100%; background: var(--azul); border-radius: 4px; }
+
+.tags { display: flex; flex-wrap: wrap; gap: 8px; }
+.tag { font-size: 11px; font-weight: 600; padding: 3px 8px; border-radius: 10px; }
+.tag-ok { background: #DCFCE7; color: #166534; }
+.tag-muted { background: var(--fondo-2); color: var(--texto-3); }
+
+/* ===== Juego ===== */
+
+.game-message {
+    font-size: 15px;
+    font-weight: 600;
+    background: white;
+    border: 1px solid var(--borde-suave);
+    border-radius: 8px;
+    padding: 10px 12px;
+    margin: 0;
+}
+.game-win { background: #DCFCE7; border-color: var(--verde); }
+.game-lose { background: #FEE2E2; border-color: var(--rojo); }
+
+.log-box {
+    background: white;
+    border: 1px solid var(--borde-suave);
+    border-radius: 8px;
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+.log-line { font-family: var(--mono); font-size: 12.5px; color: var(--texto-2); margin: 0; overflow-wrap: anywhere; }
+
+.candidate-row { display: flex; align-items: center; gap: 10px; }
+
+/* ===== Diagrama de Venn ===== */
+
+/* El lienzo mide siempre 560 px y se achica con transform: el marco no debe estirarse con él. */
+.venn-marco { width: 560px; max-width: 100%; overflow: hidden; }
+.venn { position: relative; width: 560px; transform-origin: top left; }
+.venn svg { position: absolute; inset: 0; }
+.venn-texto {
+    position: absolute;
+    text-align: center;
+    font-family: var(--fuente);
+    font-weight: 600;
+    color: var(--texto);
+    line-height: 1.32;
+}
+.venn-nombre { position: absolute; font-family: var(--fuente); font-weight: 700; color: var(--texto); transform: translateX(-50%); }
+.venn-medidor { position: absolute; visibility: hidden; left: -9999px; top: 0; }

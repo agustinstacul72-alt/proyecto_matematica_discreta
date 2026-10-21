@@ -11,7 +11,7 @@ Proyecto final de **Matemáticas Discretas** · Grupo 6
 ![Java](https://img.shields.io/badge/Java-25-ED8B00?logo=openjdk&logoColor=white)
 ![JavaFX](https://img.shields.io/badge/JavaFX-25-1565C0)
 ![Maven](https://img.shields.io/badge/Maven-wrapper-C71A36?logo=apachemaven&logoColor=white)
-![Pruebas](https://img.shields.io/badge/JUnit-22%20pruebas-25A162?logo=junit5&logoColor=white)
+![Pruebas](https://img.shields.io/badge/JUnit-26%20pruebas-25A162?logo=junit5&logoColor=white)
 
 <img src="src/main/resources/com/medset/images/jala-logo.png" alt="Jala University" width="200">
 
@@ -94,6 +94,17 @@ calcula la pregunta que mejor parte a C.
   <img src="docs/capturas/8_juego.png" alt="Juego detective" width="700">
 </div>
 
+## Usar en el navegador
+
+MedSet también funciona en la web, sin instalar nada y desde el celular:
+
+**https://agustinstacul72-alt.github.io/proyecto_matematica_discreta/**
+
+La versión web usa **el mismo código Java** de la app de escritorio (`logica/`
+y `modelo/`), compilado a JavaScript con [TeaVM](https://teavm.org/). Por eso
+calcula exactamente lo mismo: las operaciones, el índice de Jaccard, las cuatro
+reglas de urgencia y el juego. Solo la interfaz está hecha en HTML y CSS.
+
 ## Descargar
 
 En [Releases](https://github.com/agustinstacul72-alt/proyecto_matematica_discreta/releases/latest)
@@ -133,25 +144,35 @@ descargue las dependencias y elegí la configuración de ejecución **MedSet**
 `--enable-native-access=javafx.graphics`, que Java 25 necesita para que JavaFX
 arranque sin advertencias.
 
+**Versión web en tu computador:**
+
+```bash
+bash ./mvnw -f web/pom.xml package                           # o .\mvnw.cmd -f web\pom.xml package
+python -m http.server 8765 --directory web/target/sitio      # abrí http://localhost:8765
+```
+
 ## Pruebas
 
 ```bash
 bash ./mvnw test        # o .\mvnw.cmd test en Windows
 ```
 
-Hay 22 pruebas JUnit: leyes de De Morgan, no conmutatividad de la diferencia,
-principio de inclusión-exclusión, las cuatro reglas de urgencia (incluido el tipo
-de paciente) y que el juego siempre se puede resolver.
+Hay 26 pruebas JUnit: leyes de De Morgan, no conmutatividad de la diferencia,
+principio de inclusión-exclusión, los textos de la calculadora, las cuatro reglas
+de urgencia (incluido el tipo de paciente) y que el juego siempre se puede resolver.
 
 ## Estructura del proyecto
 
 ```
 src/main/java/com/medset/
-├── logica/       Operaciones de conjuntos (∪ ∩ − Δ ' ⊆ ∈ |A| Jaccard)
-├── modelo/       Catálogo clínico, tipos de paciente, MotorTriage, JuegoDetective
+├── logica/       Operaciones de conjuntos y calculadora     ← compartido con la web
+├── modelo/       Catálogo, tipos de paciente, triage, juego ← compartido con la web
 ├── controller/   Controladores de cada pantalla (JavaFX)
-├── ui/           Diagrama de Venn
+├── ui/           Diagrama de Venn (JavaFX)
 └── util/         Navegación entre pantallas
+web/
+├── src/main/java/com/medset/web/   Puente Java → JavaScript (MedSetWeb)
+└── src/main/webapp/                Páginas, estilos y diagrama de Venn web
 ```
 
 Documentación completa:

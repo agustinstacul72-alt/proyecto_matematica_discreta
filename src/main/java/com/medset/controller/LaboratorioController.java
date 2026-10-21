@@ -1,15 +1,15 @@
 package com.medset.controller;
 
-import com.medset.logica.FormatoConjunto;
+import com.medset.logica.ZonaVenn;
 import com.medset.modelo.CatalogoClinico;
 import com.medset.modelo.Enfermedad;
 import com.medset.modelo.EvaluacionTriage;
 import com.medset.modelo.MotorTriage;
 import com.medset.modelo.NivelUrgencia;
 import com.medset.modelo.ResultadoAnalisis;
+import com.medset.modelo.TextosTriage;
 import com.medset.modelo.TipoPaciente;
 import com.medset.ui.VennDiagrama;
-import com.medset.ui.VennDiagrama.Zona;
 import com.medset.util.SceneManager;
 import com.medset.util.Vista;
 import javafx.event.ActionEvent;
@@ -33,13 +33,6 @@ import java.util.Map;
 import java.util.Set;
 
 public class LaboratorioController {
-
-    private static final List<Set<String>> EJEMPLOS = List.of(
-            Set.of("fiebre", "tos", "dolor de cabeza", "cansancio"),
-            Set.of("fiebre", "tos", "dolor de garganta", "cansancio"),
-            Set.of("estornudos", "congestión nasal", "picazón en los ojos"),
-            Set.of("fiebre", "tos", "dificultad para respirar", "dolor de pecho"),
-            Set.of("fiebre", "dolor detrás de los ojos", "sarpullido", "dolor muscular"));
 
     @FXML private FlowPane edadPane;
     @FXML private FlowPane condicionesPane;
@@ -75,7 +68,7 @@ public class LaboratorioController {
 
     private void crearSelectorDeEdad() {
         for (TipoPaciente t : TipoPaciente.gruposDeEdad()) {
-            ToggleButton boton = new ToggleButton(t.nombre() + " · " + t.edades());
+            ToggleButton boton = new ToggleButton(TextosTriage.botonEdad(t));
             boton.getStyleClass().add("chip");
             boton.setUserData(t);
             boton.setToggleGroup(grupoEdad);
@@ -140,8 +133,9 @@ public class LaboratorioController {
 
     @FXML
     private void pacienteEjemplo() {
-        cargar(EJEMPLOS.get(ejemplo));
-        ejemplo = (ejemplo + 1) % EJEMPLOS.size();
+        List<Set<String>> ejemplos = TextosTriage.PACIENTES_DE_EJEMPLO;
+        cargar(ejemplos.get(ejemplo));
+        ejemplo = (ejemplo + 1) % ejemplos.size();
     }
 
     @FXML
@@ -170,17 +164,12 @@ public class LaboratorioController {
 
     private void actualizar() {
         Set<String> p = paciente();
-        Set<String> u = CatalogoClinico.UNIVERSO;
         EvaluacionTriage evaluacion = motor.evaluar(p, perfil());
 
-        tipoLabel.setText(evaluacion.sintomasDeRiesgo().isEmpty()
-                ? "G = ∅: adulto sin condiciones especiales, así que la Regla 4 no aplica."
-                : "G = síntomas de riesgo = " + FormatoConjunto.formatear(evaluacion.sintomasDeRiesgo())
-                        + "\nP ∩ G = " + FormatoConjunto.formatear(evaluacion.riesgos()));
-        pLabel.setText("P = " + FormatoConjunto.formatear(p) + "\n|P| = " + p.size() + " de |U| = " + u.size());
-        complementoLabel.setText("Síntomas descartados: P' = U − P tiene " + (u.size() - p.size()) + " elementos.");
-        alarmaLabel.setText("R = síntomas de alarma = " + FormatoConjunto.formatear(CatalogoClinico.SINTOMAS_DE_ALARMA)
-                + "\nP ∩ R = " + FormatoConjunto.formatear(evaluacion.alarmas()));
+        tipoLabel.setText(TextosTriage.riesgos(evaluacion));
+        pLabel.setText(TextosTriage.paciente(p));
+        complementoLabel.setText(TextosTriage.complemento(p));
+        alarmaLabel.setText(TextosTriage.alarmas(evaluacion));
 
         rankingBox.getChildren().clear();
         if (p.isEmpty()) {
@@ -189,8 +178,8 @@ public class LaboratorioController {
         }
 
         NivelUrgencia nivel = evaluacion.nivel();
-        urgenciaBadge.setText("URGENCIA " + nivel.etiqueta().toUpperCase());
-        urgenciaBadge.getStyleClass().setAll("badge", "badge-" + nivel.name().toLowerCase());
+        urgenciaBadge.setText(TextosTriage.urgencia(nivel));
+        urgenciaBadge.getStyleClass().setAll("badge", TextosTriage.estiloUrgencia(nivel));
         urgenciaTexto.setText(nivel.indicacion());
         reglaLabel.setText(evaluacion.regla());
 
@@ -201,14 +190,14 @@ public class LaboratorioController {
             rankingBox.getChildren().add(tarjeta(r, r.enfermedad().equals(enfoque)));
         }
 
-        vennTitulo.setText("Diagrama de Venn: P (paciente) frente a E = " + enfoque.nombre());
-        venn.dibujar(p, enfoque.sintomas(), "P", "E", EnumSet.of(Zona.AMBOS), false);
+        vennTitulo.setText(TextosTriage.tituloVenn(enfoque));
+        venn.dibujar(p, enfoque.sintomas(), "P", "E", EnumSet.of(ZonaVenn.AMBOS), false);
     }
 
     private void mostrarSinDatos() {
-        urgenciaBadge.setText("SIN DATOS");
+        urgenciaBadge.setText(TextosTriage.SIN_DATOS);
         urgenciaBadge.getStyleClass().setAll("badge", "badge-neutral");
-        urgenciaTexto.setText("Seleccioná al menos un síntoma. P = ∅ no se compara con ninguna enfermedad.");
+        urgenciaTexto.setText(TextosTriage.SIN_DATOS_INDICACION);
         reglaLabel.setText("");
         vennTitulo.setText("");
         venn.limpiar();
@@ -222,15 +211,12 @@ public class LaboratorioController {
         ProgressBar barra = new ProgressBar(r.similitud());
         barra.setPrefWidth(220);
         barra.getStyleClass().add("jaccard-bar");
-        Label pct = new Label("J = " + r.porcentaje() + "%");
+        Label pct = new Label(TextosTriage.porcentaje(r));
         pct.getStyleClass().add("card-pct");
         HBox cabecera = new HBox(12, nombre, barra, pct);
         cabecera.setAlignment(Pos.CENTER_LEFT);
 
-        Label detalle = new Label(
-                "P ∩ E (coinciden) = " + FormatoConjunto.formatear(r.coincidencias())
-                        + "\nE − P (le faltan al paciente) = " + FormatoConjunto.formatear(r.faltantes())
-                        + "\nP − E (no los explica) = " + FormatoConjunto.formatear(r.noExplicados()));
+        Label detalle = new Label(TextosTriage.detalle(r));
         detalle.setWrapText(true);
         detalle.getStyleClass().add("card-detail");
 
@@ -239,8 +225,7 @@ public class LaboratorioController {
         if (seleccionada) {
             card.getStyleClass().add("rank-card-selected");
         }
-        boolean disjuntos = r.coincidencias().isEmpty();
-        if (disjuntos) {
+        if (TextosTriage.atenuada(r)) {
             card.setOpacity(0.6);
         }
         card.setOnMouseClicked(e -> {
@@ -252,20 +237,9 @@ public class LaboratorioController {
 
     private HBox etiquetas(ResultadoAnalisis r) {
         HBox etiquetas = new HBox(8);
-        if (r.coincidenciaExacta()) {
-            etiquetas.getChildren().add(tag("P = E  coincidencia exacta", "tag-ok"));
-        } else {
-            if (r.pSubconjuntoE()) {
-                etiquetas.getChildren().add(tag("P ⊆ E  explica todos los síntomas", "tag-ok"));
-            }
-            if (r.eSubconjuntoP()) {
-                etiquetas.getChildren().add(tag("E ⊆ P  cuadro completo", "tag-ok"));
-            }
-            if (r.coincidencias().isEmpty()) {
-                etiquetas.getChildren().add(tag("P ∩ E = ∅  disjuntos", "tag-muted"));
-            }
+        for (TextosTriage.Etiqueta e : TextosTriage.etiquetas(r)) {
+            etiquetas.getChildren().add(tag(e.texto(), e.ok() ? "tag-ok" : "tag-muted"));
         }
-        etiquetas.getChildren().add(tag("urgencia base: " + r.enfermedad().urgencia().etiqueta(), "tag-muted"));
         return etiquetas;
     }
 
