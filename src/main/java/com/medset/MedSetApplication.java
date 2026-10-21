@@ -5,6 +5,7 @@ import com.medset.util.Vista;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -12,6 +13,7 @@ import java.io.IOException;
 public class MedSetApplication extends Application {
 
     private static final String TITULO = "MedSet · Teoría de conjuntos aplicada al triage";
+    private static final String ICONO = "/com/medset/images/medset-icon.png";
     private static final String SMOKE_TEST = "--smoke-test";
 
     @Override
@@ -25,6 +27,7 @@ public class MedSetApplication extends Application {
         }
 
         stage.setTitle(TITULO);
+        stage.getIcons().add(new Image(MedSetApplication.class.getResource(ICONO).toExternalForm()));
         stage.setScene(new Scene(SceneManager.cargar(Vista.INICIO), 1200, 750));
         stage.setMinWidth(1000);
         stage.setMinHeight(650);

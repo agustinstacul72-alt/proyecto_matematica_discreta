@@ -31,6 +31,7 @@ jobs:
             --module-path target/package-input \
             --module com.medset/com.medset.Launcher \
             --java-options "--enable-native-access=javafx.graphics" \
+            --icon src/main/packaging/medset.png \
             --dest target/app-image
       - name: Install virtual display
         run: sudo apt-get update && sudo apt-get install --yes xvfb
