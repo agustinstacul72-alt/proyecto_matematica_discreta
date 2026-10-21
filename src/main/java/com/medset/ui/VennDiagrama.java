@@ -2,6 +2,7 @@ package com.medset.ui;
 
 import com.medset.logica.FormatoConjunto;
 import com.medset.logica.OperacionesConjuntos;
+import com.medset.logica.ZonaVenn;
 import javafx.geometry.VPos;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
@@ -23,9 +24,6 @@ import java.util.Set;
  * quede dentro de su zona.
  */
 public class VennDiagrama extends Pane {
-
-    /** Zonas de un diagrama de dos conjuntos que se pueden resaltar. */
-    public enum Zona { SOLO_A, AMBOS, SOLO_B }
 
     private static final double ANCHO = 560;
     private static final double MARGEN = 8;
@@ -76,7 +74,7 @@ public class VennDiagrama extends Pane {
      * @param alerta si es {@code true} el resaltado es rojo (por ejemplo, un contraejemplo)
      */
     public void dibujar(Set<String> a, Set<String> b, String nombreA, String nombreB,
-                        Set<Zona> resaltar, boolean alerta) {
+                        Set<ZonaVenn> resaltar, boolean alerta) {
         Set<String> soloA = OperacionesConjuntos.calcularDiferencia(a, b);
         Set<String> ambos = OperacionesConjuntos.calcularInterseccion(a, b);
         Set<String> soloB = OperacionesConjuntos.calcularDiferencia(b, a);
@@ -88,13 +86,13 @@ public class VennDiagrama extends Pane {
         Ellipse conjuntoA = ovalo(CX_A, RADIO_X);
         Ellipse conjuntoB = ovalo(CX_B, RADIO_X);
         Color color = alerta ? RESALTADO_ROJO : RESALTADO;
-        if (resaltar.contains(Zona.SOLO_A)) {
+        if (resaltar.contains(ZonaVenn.SOLO_A)) {
             pintar(Shape.subtract(conjuntoA, conjuntoB), color);
         }
-        if (resaltar.contains(Zona.AMBOS)) {
+        if (resaltar.contains(ZonaVenn.AMBOS)) {
             pintar(Shape.intersect(conjuntoA, conjuntoB), color);
         }
-        if (resaltar.contains(Zona.SOLO_B)) {
+        if (resaltar.contains(ZonaVenn.SOLO_B)) {
             pintar(Shape.subtract(conjuntoB, conjuntoA), color);
         }
         contorno(conjuntoA);
